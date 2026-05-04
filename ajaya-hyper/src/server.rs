@@ -101,7 +101,7 @@ impl Server {
                 });
 
                 if let Err(err) = Builder::new(TokioExecutor::new())
-                    .serve_connection(io, hyper_svc)
+                    .serve_connection_with_upgrades(io, hyper_svc)
                     .await
                 {
                     tracing::error!("Connection error: {}", err);
@@ -152,7 +152,7 @@ impl Server {
                 });
 
                 if let Err(err) = Builder::new(TokioExecutor::new())
-                    .serve_connection(io, hyper_svc)
+                    .serve_connection_with_upgrades(io, hyper_svc)
                     .await
                 {
                     tracing::error!("Connection error: {}", err);
@@ -187,7 +187,7 @@ impl Server {
                 });
 
                 if let Err(err) = Builder::new(TokioExecutor::new())
-                    .serve_connection(io, hyper_svc)
+                    .serve_connection_with_upgrades(io, hyper_svc)
                     .await
                 {
                     tracing::error!("Connection error: {}", err);

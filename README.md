@@ -6,7 +6,7 @@
 
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
-[![Version](https://img.shields.io/badge/version-0.4.1-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.0-green.svg)](CHANGELOG.md)
 [![Discord](https://img.shields.io/discord/placeholder?label=discord&logo=discord&logoColor=white)](https://discord.gg/HDth6PfCnp)
 
 </div>
@@ -17,7 +17,7 @@
 
 **Ajaya** (अजय, *"The Unconquerable"*) is a high-performance Rust web framework built from the ground up on **Tokio** and **Hyper 1.x**. It aims to unify the best features of Axum and Actix-web under one ergonomic, blazing-fast API.
 
-> 🔱 **v0.4.1 — Middleware System** Ajaya now features Tower integration, CORS middleware, and more. Follow along on [YouTube](https://youtube.com/@AarambhDevHub) or join the [Discord](https://discord.gg/HDth6PfCnp) to track progress.
+> 🔱 **v0.5.0 — WebSocket Support** Ajaya now has full WebSocket support with auto-pong, split send/receive, subprotocol negotiation, and RFC 6455 compliant upgrade. Follow along on [YouTube](https://youtube.com/@AarambhDevHub) or join the [Discord](https://discord.gg/HDth6PfCnp) to track progress.
 
 ---
 
@@ -47,7 +47,7 @@ curl http://localhost:8080/not-a-route
 
 ---
 
-## Features (v0.4.11)
+## Features (v0.5.0)
 
 ### ✅ Type-Safe Extractors
 
@@ -170,6 +170,70 @@ Handlers can return `Result<T, Error>` and use `?` for error propagation. Errors
 | `map_request` | Transform request only (no response) |
 | `map_response` | Transform response only (no request) |
 
+### ✅ WebSocket Support
+
+Full WebSocket support via `ajaya-ws`, built on `tokio-tungstenite`. Auto-pong keeps connections alive with zero application boilerplate.
+
+> **WebSocket is opt-in.** Enable it by adding the `ws` feature to your `Cargo.toml`:
+>
+> ```toml
+> # Opt in to WebSocket
+> ajaya = { version = "0.5", features = ["ws"] }
+> ```
+>
+> Default build (`ajaya = "0.5"`) is HTTP-only — no WebSocket compiled in.
+
+```rust
+use ajaya::{Router, get};
+use ajaya::ws::{WebSocket, WebSocketUpgrade, Message};
+
+async fn ws_handler(ws: WebSocketUpgrade) -> impl ajaya::IntoResponse {
+    ws.on_upgrade(|mut socket| async move {
+        // Ping/Pong handled automatically — no extra match arm needed
+        while let Some(Ok(msg)) = socket.recv().await {
+            match msg {
+                Message::Text(text) => {
+                    socket.send(Message::Text(format!("echo: {text}"))).await.ok();
+                }
+                Message::Binary(data) => {
+                    socket.send(Message::Binary(data)).await.ok();
+                }
+                Message::Close(_) => break,
+                _ => {}
+            }
+        }
+    })
+}
+
+// With config + subprotocol negotiation
+async fn chat_handler(ws: WebSocketUpgrade) -> impl ajaya::IntoResponse {
+    ws.protocols(["chat", "json"])
+      .max_message_size(64 * 1024)   // 64 KB
+      .max_frame_size(16 * 1024)     // 16 KB
+      .on_upgrade(|socket| async move {
+          let (mut sender, mut receiver) = socket.split();
+          while let Some(Ok(msg)) = receiver.next().await {
+              sender.send(msg).await.ok();
+          }
+      })
+}
+
+let app = Router::new()
+    .route("/ws", get(ws_handler))
+    .route("/chat", get(chat_handler));
+```
+
+**Features at a glance:**
+
+| Feature | Detail |
+|---|---|
+| Auto ping/pong | `recv()` replies to Ping transparently |
+| Split send/receive | `socket.split()` → `(Sender, Receiver)` |
+| `Stream` impl | `Receiver` works with `futures_util` combinators |
+| Subprotocol negotiation | `.protocols(["chat", "json"])` |
+| Configurable limits | `max_message_size`, `max_frame_size` |
+| Typed rejections | `WebSocketUpgradeRejection` with correct HTTP codes |
+| RFC 6455 compliant | SHA-1 accept key, full close code enum |
 
 ---
 
@@ -183,7 +247,7 @@ ajaya/
 ├── ajaya-hyper/        # Hyper 1.x server integration
 ├── ajaya-extract/      # Extractors: Path, Query, Json, Form (coming in v0.2.x)
 ├── ajaya-middleware/   # CORS, compression, timeout, etc. (coming in v0.4.x)
-├── ajaya-ws/           # WebSocket support (coming in v0.5.x)
+├── ajaya-ws/           # WebSocket support (v0.5.0 ✅)
 ├── ajaya-sse/          # Server-Sent Events (coming in v0.5.x)
 ├── ajaya-static/       # Static file serving (coming in v0.6.x)
 ├── ajaya-tls/          # TLS via rustls (coming in v0.6.x)
@@ -204,7 +268,8 @@ See [ROADMAP.md](ROADMAP.md) for the complete version-by-version plan.
 | **0.2.x** | Extractors | ✅ Complete |
 | **0.3.x** | Responses & Error Handling | ✅ Complete |
 | **0.4.x** | Middleware | ✅ Complete |
-| 0.5.x | WebSocket, SSE | ⏳ Next |
+| **0.5.x** | WebSocket | ✅ Complete |
+| 0.5.1 | Server-Sent Events (SSE) | ⏳ Next |
 | 0.6.x | TLS, HTTP/2, Static Files | ⏳ Planned |
 | 0.7.x | Macros, Testing, Config | ⏳ Planned |
 | 0.8.x | Observability & Security | ⏳ Planned |
