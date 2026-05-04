@@ -124,7 +124,12 @@ where
     ///
     /// Returns `None` when the connection is closed.
     /// Returns `Some(Err(e))` on protocol or IO errors.
+    ///
+    /// # Note
+    /// `tungstenite::Error` is a large type (136 bytes). We allow this lint
+    /// because it is an external type we cannot shrink.
     #[inline]
+    #[allow(clippy::result_large_err)]
     pub async fn next(&mut self) -> Option<Result<Message, WsError>> {
         self.inner.next().await.map(|r| r.map(Message::from))
     }
@@ -144,6 +149,8 @@ where
 {
     type Item = Result<Message, WsError>;
 
+    // `tungstenite::Error` is 136 bytes (external type — cannot be reduced).
+    #[allow(clippy::result_large_err)]
     fn poll_next(
         mut self: std::pin::Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
