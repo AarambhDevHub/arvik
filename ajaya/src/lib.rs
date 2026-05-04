@@ -215,3 +215,40 @@ pub use ajaya_middleware::trace::{DefaultMakeSpan, LatencyUnit, TraceLayer};
 
 // Tower layer / service primitives (for custom middleware authors)
 pub use ajaya_router::layer::{BoxCloneService, LayerFn};
+
+// ---------------------------------------------------------------------------
+// WebSocket support (0.5.x) — feature = "ws" (enabled by default)
+// ---------------------------------------------------------------------------
+
+/// WebSocket upgrade and messaging.
+///
+/// Enabled by the `ws` feature (on by default). Disable with:
+/// ```toml
+/// ajaya = { version = "0.5", default-features = false }
+/// ```
+///
+/// # Quick start
+///
+/// ```rust,ignore
+/// use ajaya::ws::{WebSocket, WebSocketUpgrade, Message};
+///
+/// async fn handler(ws: WebSocketUpgrade) -> impl IntoResponse {
+///     ws.on_upgrade(|mut socket| async move {
+///         // Ping/Pong handled automatically — no extra match arm needed
+///         while let Some(Ok(msg)) = socket.recv().await {
+///             socket.send(msg).await.ok();
+///         }
+///     })
+/// }
+/// ```
+#[cfg(feature = "ws")]
+pub mod ws {
+    pub use ajaya_ws::{
+        CloseCode, CloseFrame, Message, Receiver, Sender, WebSocket, WebSocketConfig,
+        WebSocketUpgrade, WebSocketUpgradeRejection, WsError,
+    };
+}
+
+// Top-level convenience — most common types (feature = "ws")
+#[cfg(feature = "ws")]
+pub use ajaya_ws::{Message as WsMessage, WebSocket, WebSocketUpgrade};

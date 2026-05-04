@@ -9,6 +9,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] — 2026-05-04 — WebSocket Support
+
+### Added
+
+**`ajaya-ws`** — Full WebSocket upgrade and messaging crate.
+
+- `WebSocketUpgrade` — `FromRequest` extractor that validates the RFC 6455 handshake:
+  - Checks `GET` method, `Connection: upgrade`, `Upgrade: websocket`, `Sec-WebSocket-Version: 13`
+  - Extracts and validates `Sec-WebSocket-Key`, computes `Sec-WebSocket-Accept` (SHA-1 + base64)
+  - Returns `101 Switching Protocols` response; WebSocket handler runs in a detached `tokio::spawn` task
+- `WebSocket` — Connected session handle:
+  - `.send(msg)` — send any `Into<Message>` with immediate flush
+  - `.recv()` — receive next message; **auto-replies to `Ping` with `Pong`** transparently
+  - `.send_text(s)` / `.send_binary(data)` — convenience wrappers
+  - `.send_batch(msgs)` — feed multiple messages, single flush (efficient for burst sends)
+  - `.close(frame)` — graceful close with optional `CloseFrame`
+  - `.split()` — split into `(Sender, Receiver)` for concurrent bidirectional communication
+  - `.protocol()` — returns the negotiated subprotocol
+- `Sender<S>` / `Receiver<S>` — split halves for concurrent send + receive:
+  - `Sender`: `.send()`, `.flush()`, `.close()`, `.send_batch()`
+  - `Receiver`: `.next()`, implements `futures_util::Stream` for combinator support
+  - In split mode, `Ping` frames are surfaced to the `Receiver` for manual pong via `Sender`
+- `Message` — WebSocket message enum:
+  - Variants: `Text(String)`, `Binary(Vec<u8>)`, `Ping(Vec<u8>)`, `Pong(Vec<u8>)`, `Close(Option<CloseFrame>)`
+  - `From<String>`, `From<&str>`, `From<Vec<u8>>`, `From<bytes::Bytes>` conversions
+  - Predicate helpers: `.is_text()`, `.is_binary()`, `.is_ping()`, `.is_pong()`, `.is_close()`
+  - Accessors: `.as_text()`, `.as_bytes()`, `.len()`, `.is_empty()`
+- `CloseFrame` — close frame with `CloseCode` and reason string:
+  - `CloseFrame::new(code, reason)`, `CloseFrame::normal()`
+- `CloseCode` — full RFC 6455 §7.4.1 close code enum (Normal, Away, Protocol, … Other(u16))
+- `WebSocketConfig` — connection configuration via builder methods on `WebSocketUpgrade`:
+  - `.max_message_size(usize)` — default: 64 MiB
+  - `.max_frame_size(usize)` — default: 16 MiB
+  - `.accept_unmasked_frames(bool)` — RFC compliance toggle
+  - `.protocols(["chat", "json"])` — subprotocol negotiation (preference order)
+  - `.selected_protocol()` — inspect the negotiated protocol
+- `WebSocketUpgradeRejection` — typed rejection enum with proper HTTP status codes:
+  - `MethodNotGet` → 405, `InvalidWebSocketVersionHeader` → 400,
+  - `ConnectionNotUpgradable` → 500, rest → 400
+- `WsError` — type alias for `tungstenite::Error`
+
+**`ajaya`** facade exports:
+
+- `use ajaya::ws::{WebSocket, WebSocketUpgrade, Message, ...}` — full module
+- `use ajaya::{WebSocket, WebSocketUpgrade, WsMessage}` — top-level convenience
+
+### Changed
+
+- `ajaya-ws/Cargo.toml` — added full dependency set: `tokio-tungstenite`, `hyper`, `hyper-util`,
+  `sha1`, `base64`, `futures-util`, `tracing`, `pin-project-lite`
+- `Cargo.toml` (workspace) — added `sha1 = "0.10"` workspace dependency
+- `ARCHITECTURE.md` §11 — updated WebSocket section to document auto-pong behaviour,
+  simpler echo example, and split-mode pong pattern
+
+### Fixed
+
+- `message.rs` — removed 8 redundant `.into()` calls (clippy `useless_conversion`)
+
+---
+
 ## [0.4.11] — 2026-MM-DD — CSRF Protection
 
 ### Added

@@ -1,13 +1,15 @@
 //! Ajaya (अजय) — The Unconquerable Rust Web Framework
 //!
-//! Entry point binary demonstrating path-based routing with parameters,
-//! extractors, wildcards, cookies, streaming, and — in v0.4.2 — the new
-//! function-based middleware API.
+//! REST API demo showcasing routing, extractors, middleware, cookies,
+//! streaming, CSRF protection, and panic recovery.
+//!
+//! Run: cargo run -p rest-api
+//! Test: curl http://localhost:8080/
 
 use ajaya::{
     AppendHeaders, CatchPanicLayer, CompressionLayer, Cookie, CookieJar, CookieKey, CsrfLayer,
-    CsrfToken, Error, ErrorResponse, Extension, FromRef, Html, IntoResponse, Json, Multipart, Path,
-    Query, Request, RequestBodyLimitLayer, RequestIdLayer, Response, Router, SecurityHeadersLayer,
+    CsrfToken, Error, Extension, FromRef, Html, IntoResponse, Json, Multipart, Path, Query,
+    Request, RequestBodyLimitLayer, RequestIdLayer, Response, Router, SecurityHeadersLayer,
     SignedCookieJar, State, StreamBody, TimeoutLayer, TraceLayer, get,
     middleware::{Next, from_fn, from_fn_with_state, map_response},
     post, serve_app,
@@ -36,19 +38,14 @@ impl FromRef<AppState> for CookieKey {
     }
 }
 
-// ── Middleware (v0.4.2 style — plain async functions) ─────────────────────────
+// ── Middleware ────────────────────────────────────────────────────────────────
 
-/// Attach a UUID to every request via extensions.
-///
-/// Before (v0.4.1): 30+ lines of Service + Layer boilerplate.
-/// After  (v0.4.2): 4 lines.
 async fn attach_request_id(mut req: Request, next: Next) -> Response {
     req.extensions_mut()
         .insert(uuid::Uuid::new_v4().to_string());
     next.run(req).await
 }
 
-/// Log method, path and status for every request.
 async fn log_requests(req: Request, next: Next) -> Response {
     let method = req.method().clone();
     let path = req.uri().path().to_string();
@@ -57,7 +54,6 @@ async fn log_requests(req: Request, next: Next) -> Response {
     res
 }
 
-/// Count requests using shared state via `from_fn_with_state`.
 async fn count_requests(State(state): State<AppState>, req: Request, next: Next) -> Response {
     let n = state
         .request_count
@@ -66,14 +62,13 @@ async fn count_requests(State(state): State<AppState>, req: Request, next: Next)
     next.run(req).await
 }
 
-/// Append `x-powered-by: ajaya` to every response using `map_response`.
 async fn add_powered_by_header(mut res: Response) -> Response {
     res.headers_mut()
         .insert("x-powered-by", "ajaya".parse().unwrap());
     res
 }
 
-// ── Route types ───────────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 #[derive(Serialize)]
 struct User {
@@ -91,23 +86,20 @@ struct SearchParams {
     query: String,
 }
 
-// ── Route handlers ────────────────────────────────────────────────────────────
+// ── Handlers ──────────────────────────────────────────────────────────────────
 
-/// GET / — JSON health check.
 async fn health() -> Result<Json<serde_json::Value>, Error> {
     Ok(Json(serde_json::json!({
         "status": "healthy",
         "framework": "Ajaya",
-        "version": "0.4.2"
+        "version": "0.5.0"
     })))
 }
 
-/// GET /state — read app state.
 async fn read_state(State(state): State<AppState>) -> String {
     format!("App: {}", state.app_name)
 }
 
-/// GET /users — list users (optional query).
 async fn list_users(query: Option<Query<SearchParams>>) -> Json<serde_json::Value> {
     match query {
         Some(Query(p)) => Json(serde_json::json!({
@@ -123,7 +115,6 @@ async fn list_users(query: Option<Query<SearchParams>>) -> Json<serde_json::Valu
     }
 }
 
-/// POST /users — create user from JSON body.
 async fn create_user(Json(body): Json<CreateUser>) -> (StatusCode, Json<User>) {
     (
         StatusCode::CREATED,
@@ -134,7 +125,6 @@ async fn create_user(Json(body): Json<CreateUser>) -> (StatusCode, Json<User>) {
     )
 }
 
-/// GET /users/:id — get user by ID.
 async fn get_user(Path(id): Path<u64>) -> Json<User> {
     Json(User {
         id,
@@ -142,12 +132,10 @@ async fn get_user(Path(id): Path<u64>) -> Json<User> {
     })
 }
 
-/// GET /files/*path — wildcard catch-all.
 async fn serve_file(Path(path): Path<String>) -> String {
     format!("Serving file: {path}")
 }
 
-/// GET /stream — streaming response.
 async fn stream_data() -> StreamBody<impl futures_util::Stream<Item = Result<Bytes, io::Error>>> {
     let chunks = stream::iter(vec![
         Ok(Bytes::from("chunk 1 ")),
@@ -156,7 +144,6 @@ async fn stream_data() -> StreamBody<impl futures_util::Stream<Item = Result<Byt
     StreamBody::new(chunks)
 }
 
-/// GET /cached — response with cache headers.
 async fn cached_data() -> impl IntoResponse {
     (
         AppendHeaders([(CACHE_CONTROL, "public, max-age=3600")]),
@@ -164,7 +151,6 @@ async fn cached_data() -> impl IntoResponse {
     )
 }
 
-/// POST /upload — multipart upload.
 async fn upload(mut multipart: Multipart) -> String {
     let mut count = 0;
     while let Ok(Some(_field)) = multipart.next_field().await {
@@ -173,7 +159,6 @@ async fn upload(mut multipart: Multipart) -> String {
     format!("Received {} fields", count)
 }
 
-/// POST /login — plain cookie session.
 async fn login(jar: CookieJar) -> (CookieJar, &'static str) {
     let jar = jar.add(
         Cookie::build(("session", "s3cr3t"))
@@ -185,36 +170,30 @@ async fn login(jar: CookieJar) -> (CookieJar, &'static str) {
     (jar, "Logged in!")
 }
 
-/// POST /logout — remove session cookie.
 async fn logout(jar: CookieJar) -> (CookieJar, &'static str) {
     let jar = jar.remove(Cookie::from("session"));
     (jar, "Logged out!")
 }
 
-/// POST /set_user — signed cookie.
 async fn set_user(jar: SignedCookieJar) -> (SignedCookieJar, &'static str) {
     let jar = jar.add(Cookie::new("user_id", "42"));
     (jar, "User cookie signed and set!")
 }
 
-/// GET /get_user — read signed cookie.
 async fn get_user_cookie(jar: SignedCookieJar) -> String {
     jar.get("user_id")
         .map(|c| format!("user_id={}", c.value()))
         .unwrap_or_else(|| "no session".into())
 }
 
-/// Custom 404 fallback.
 async fn not_found() -> (StatusCode, &'static str) {
     (StatusCode::NOT_FOUND, "🔱 Ajaya: Page not found")
 }
 
-/// GET /panic — demonstrates CatchPanicLayer
 async fn deliberate_panic() -> &'static str {
     panic!("This panic is intentional for demo purposes");
 }
 
-/// GET /csrf-form — demonstrates CSRF token injection
 async fn csrf_form(Extension(token): Extension<CsrfToken>) -> Html<String> {
     Html(format!(
         r#"<html><body>
@@ -229,37 +208,8 @@ async fn csrf_form(Extension(token): Extension<CsrfToken>) -> Html<String> {
     ))
 }
 
-/// POST /csrf-submit — protected by CSRF
 async fn csrf_submit() -> &'static str {
     "CSRF check passed!"
-}
-
-// ── Custom AppError (demonstrating structured errors) ─────────────────────────
-
-#[derive(Debug)]
-enum _AppError {
-    NotFound(String),
-    Unauthorized,
-    Internal(Box<dyn std::error::Error + Send + Sync>),
-}
-
-impl IntoResponse for _AppError {
-    fn into_response(self) -> ajaya::Response {
-        match self {
-            _AppError::NotFound(msg) => ErrorResponse::new(StatusCode::NOT_FOUND)
-                .message(msg)
-                .into_response(),
-            _AppError::Unauthorized => ErrorResponse::new(StatusCode::UNAUTHORIZED)
-                .message("Unauthorized")
-                .into_response(),
-            _AppError::Internal(e) => {
-                tracing::error!("Internal error: {e}");
-                ErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR)
-                    .message("Internal server error")
-                    .into_response()
-            }
-        }
-    }
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -277,24 +227,17 @@ async fn main() {
         r#"
     ╔═══════════════════════════════════════════════╗
     ║                                               ║
-    ║     🔱  Ajaya (अजय) v0.4.2                   ║
+    ║     🔱  Ajaya (अजय) v0.5.0                   ║
     ║     The Unconquerable Rust Web Framework       ║
     ║                                               ║
     ║     → http://localhost:8080                    ║
-    ║                                               ║
-    ║     Middleware Stack (outermost → innermost):  ║
-    ║       add_powered_by_header (map_response)     ║
-    ║       log_requests          (from_fn)          ║
-    ║       count_requests        (from_fn_w_state)  ║
-    ║       attach_request_id     (from_fn)          ║
-    ║       [route handler]                          ║
     ║                                               ║
     ║     Routes:                                    ║
     ║       GET  /            → health check         ║
     ║       GET  /state       → read app state       ║
     ║       GET  /users       → list users           ║
     ║       POST /users       → create user (json)   ║
-    ║       GET  /users/:id  → get user by ID       ║
+    ║       GET  /users/:id   → get user by ID       ║
     ║       POST /upload      → multipart upload     ║
     ║       GET  /stream      → streaming body       ║
     ║       GET  /cached      → cache headers        ║
@@ -303,6 +246,8 @@ async fn main() {
     ║       POST /set_user    → signed cookie        ║
     ║       GET  /get_user    → read signed cookie   ║
     ║       GET  /files/*p    → wildcard file        ║
+    ║       GET  /panic       → panic demo           ║
+    ║       GET  /csrf-form   → CSRF demo            ║
     ║       *    *            → 404 Not Found        ║
     ║                                               ║
     ╚═══════════════════════════════════════════════╝
@@ -310,13 +255,12 @@ async fn main() {
     );
 
     let state = AppState {
-        app_name: "Ajaya Framework (v0.4.2)".to_string(),
+        app_name: "Ajaya Framework (v0.5.0)".to_string(),
         cookie_key: CookieKey::generate(),
         request_count: Arc::new(std::sync::atomic::AtomicU64::new(0)),
     };
 
     let app = Router::new()
-        // ── Routes ──────────────────────────────────────────────────────────
         .route("/", get(health))
         .route("/state", get(read_state))
         .route("/users", get(list_users).post(create_user))
@@ -334,24 +278,14 @@ async fn main() {
         .route("/csrf-submit", post(csrf_submit))
         .fallback(not_found)
         .with_state(state.clone())
-        // ── New middleware layers (innermost → outermost) ─────────────────────
-        // Body safety (innermost)
-        .layer(RequestBodyLimitLayer::new(10 * 1024 * 1024)) // 10MB
-        // Panic safety
+        .layer(RequestBodyLimitLayer::new(10 * 1024 * 1024))
         .layer(CatchPanicLayer::new())
-        // CSRF protection for state-changing routes
         .layer(CsrfLayer::new())
-        // Timeout
         .layer(TimeoutLayer::new(Duration::from_secs(30)))
-        // Request ID (before tracing so spans get the ID)
         .layer(RequestIdLayer::new())
-        // Structured tracing
         .layer(TraceLayer::new_for_http())
-        // Security headers
         .layer(SecurityHeadersLayer::new())
-        // Compression (outermost — compresses all responses)
         .layer(CompressionLayer::new().min_size(0))
-        // ── 0.4.1 middleware (keep existing) ─────────────────────────────────
         .layer(from_fn(attach_request_id))
         .layer(from_fn_with_state(state, count_requests))
         .layer(from_fn(log_requests))

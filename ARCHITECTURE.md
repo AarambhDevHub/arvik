@@ -858,6 +858,11 @@ Router::new()
 
 ## 11. WebSockets
 
+`ajaya-ws` provides full WebSocket support built on `tokio-tungstenite`.
+
+**Auto ping/pong**: `WebSocket::recv()` automatically replies to `Ping` frames
+with a matching `Pong` — no boilerplate needed in your handler.
+
 ```rust
 // ajaya-ws
 
@@ -866,22 +871,38 @@ async fn ws_handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> Resp
     ws.on_upgrade(|socket| handle_socket(socket, state))
 }
 
+// Simple echo — Ping/Pong handled automatically, no extra match arm needed
 async fn handle_socket(mut socket: WebSocket, state: AppState) {
-    while let Some(msg) = socket.recv().await {
+    while let Some(Ok(msg)) = socket.recv().await {
         match msg {
-            Ok(Message::Text(text)) => {
+            Message::Text(text) => {
                 socket.send(Message::Text(format!("Echo: {text}"))).await.ok();
             }
-            Ok(Message::Binary(data)) => {
+            Message::Binary(data) => {
                 socket.send(Message::Binary(data)).await.ok();
             }
-            Ok(Message::Ping(data)) => {
-                socket.send(Message::Pong(data)).await.ok();
-            }
-            Ok(Message::Close(_)) | Err(_) => break,
+            Message::Close(_) => break,
             _ => {}
         }
     }
+}
+
+// Concurrent send + receive via split()
+async fn handle_split(socket: WebSocket) {
+    let (mut sender, mut receiver) = socket.split();
+
+    let send_task = tokio::spawn(async move {
+        sender.send(Message::Text("hello".into())).await.ok();
+    });
+
+    // In split mode: manually pong Ping frames via Sender
+    while let Some(Ok(msg)) = receiver.next().await {
+        if let Message::Ping(data) = msg {
+            // forward pong via the Sender in your send task
+            let _ = data; // handle as needed
+        }
+    }
+    send_task.await.ok();
 }
 
 // WebSocketUpgrade options

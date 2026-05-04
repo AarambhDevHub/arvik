@@ -505,18 +505,24 @@
 
 ## 0.5.x — Protocols
 
-### `0.5.0` — WebSocket Support
+### `0.5.0` — WebSocket Support ✅
 **Goal:** Full WebSocket upgrade and messaging.
 
-- [ ] `ajaya-ws`: `WebSocketUpgrade` extractor
-- [ ] `.on_upgrade(async fn(WebSocket))` callback
-- [ ] `WebSocket`: `.send(Message)`, `.recv() -> Option<Result<Message>>`, `.close()`
-- [ ] `Message` variants: `Text`, `Binary`, `Ping`, `Pong`, `Close`
-- [ ] Split socket: `socket.split() -> (Sender, Receiver)` for concurrent send/recv
-- [ ] Config: `max_message_size`, `max_frame_size`, `protocols`
-- [ ] Auto-respond to Ping with Pong
+- [x] `ajaya-ws`: `WebSocketUpgrade` extractor — full RFC 6455 handshake validation
+- [x] `.on_upgrade(async fn(WebSocket))` callback — spawns handler as detached Tokio task
+- [x] `WebSocket`: `.send(Message)`, `.recv() -> Option<Result<Message>>`, `.close()`
+- [x] `Message` variants: `Text`, `Binary`, `Ping`, `Pong`, `Close`
+- [x] Split socket: `socket.split() -> (Sender, Receiver)` for concurrent send/recv
+- [x] `Receiver` implements `futures_util::Stream` for combinator support
+- [x] Config: `max_message_size`, `max_frame_size`, `accept_unmasked_frames`, `protocols`
+- [x] Auto-respond to Ping with Pong (transparent to application code)
+- [x] `CloseCode` (RFC 6455 §7.4.1) + `CloseFrame` types with full tungstenite bridge
+- [x] `WebSocketUpgradeRejection` — typed rejections with correct HTTP status codes
+- [x] SHA-1 accept key computation with RFC test vector unit test
+- [x] Subprotocol negotiation via `.protocols(["chat", "json"])`
+- [x] `ajaya` facade: `ajaya::ws` module + top-level `WebSocket`, `WebSocketUpgrade` re-exports
 
-**Deliverable:** WebSocket echo server, chat server examples working.
+**Deliverable:** WebSocket echo server, chat server, and split concurrent examples working.
 
 ---
 
