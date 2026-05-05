@@ -15,11 +15,12 @@ members = [
     # Examples
     "examples/websocket_chat",
     "examples/rest_api",
+    "examples/sse_demo",
 ]
 resolver = "2"
 
 [workspace.package]
-version = "0.5.0"
+version = "0.5.1"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/AarambhDevHub/ajaya"
@@ -102,14 +103,14 @@ base64 = "0.22"
 sha1 = "0.10"
 
 # Internal crates
-ajaya-core       = { path = "ajaya-core", version = "0.5.0" }
-ajaya-router     = { path = "ajaya-router", version = "0.5.0" }
-ajaya-hyper      = { path = "ajaya-hyper", version = "0.5.0" }
-ajaya-extract    = { path = "ajaya-extract", version = "0.5.0" }
-ajaya-middleware = { path = "ajaya-middleware", version = "0.5.0" }
-ajaya-ws         = { path = "ajaya-ws", version = "0.5.0" }
-ajaya-sse        = { path = "ajaya-sse", version = "0.5.0" }
-ajaya-static     = { path = "ajaya-static", version = "0.5.0" }
-ajaya-tls        = { path = "ajaya-tls", version = "0.5.0" }
-ajaya-macros     = { path = "ajaya-macros", version = "0.5.0" }
-ajaya-test       = { path = "ajaya-test", version = "0.5.0" }
+ajaya-core       = { path = "ajaya-core", version = "0.5.1" }
+ajaya-router     = { path = "ajaya-router", version = "0.5.1" }
+ajaya-hyper      = { path = "ajaya-hyper", version = "0.5.1" }
+ajaya-extract    = { path = "ajaya-extract", version = "0.5.1" }
+ajaya-middleware = { path = "ajaya-middleware", version = "0.5.1" }
+ajaya-ws         = { path = "ajaya-ws", version = "0.5.1" }
+ajaya-sse        = { path = "ajaya-sse", version = "0.5.1" }
+ajaya-static     = { path = "ajaya-static", version = "0.5.1" }
+ajaya-tls        = { path = "ajaya-tls", version = "0.5.1" }
+ajaya-macros     = { path = "ajaya-macros", version = "0.5.1" }
+ajaya-test       = { path = "ajaya-test", version = "0.5.1" }

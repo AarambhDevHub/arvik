@@ -15,6 +15,7 @@ ajaya-router  = { workspace = true }
 ajaya-extract = { workspace = true }
 ajaya-middleware = { workspace = true }
 ajaya-ws      = { workspace = true, optional = true }
+ajaya-sse        = { workspace = true, optional = true }
 tokio         = { workspace = true }
 http          = { workspace = true }
 bytes         = { workspace = true }
@@ -31,3 +32,4 @@ uuid = { workspace = true }
 [features]
 default = []
 ws = ["dep:ajaya-ws"]
+sse = ["dep:ajaya-sse"]

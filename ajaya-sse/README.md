@@ -6,18 +6,43 @@
 
 **Server-Sent Events (SSE) for the Ajaya web framework.**
 
-This crate will provide one-directional event streaming to clients.
+This crate provides zero-allocation Server-Sent Events (SSE) streaming for Ajaya.
 
-## Planned Features (v0.5.x)
+## Features (v0.5.1)
 
-- `Sse<S>` response type wrapping any `Stream`
-- `Event` builder: `.data()`, `.id()`, `.event()`, `.retry()`
-- `KeepAlive` to prevent connection timeouts
-- Proper `Content-Type: text/event-stream` headers
+- `Sse<S>` response type wrapping any `Stream` of `Result<Event, E>`
+- `Event` builder: `.data()`, `.id()`, `.event()`, `.retry()`, `.comment()`
+- `.json_data<T: Serialize>()` helper to stream structured JSON payloads
+- `KeepAlive` configuration to prevent proxy and load-balancer timeouts
+- Full SSE spec compliance (newline normalization, null-byte stripping)
+- Pre-allocated string rendering (zero allocations on the hot path)
+
+## Quick Start
+
+```rust,ignore
+use ajaya_sse::{Event, KeepAlive, Sse};
+use std::time::Duration;
+use tokio_stream::StreamExt as _;
+
+async fn counter() -> Sse<impl futures_util::Stream<Item = Result<Event, std::convert::Infallible>>> {
+    let stream = tokio_stream::wrappers::IntervalStream::new(
+        tokio::time::interval(Duration::from_secs(1))
+    )
+    .enumerate()
+    .map(|(i, _)| {
+        Ok(Event::default()
+            .event("tick")
+            .id(i.to_string())
+            .data(i.to_string()))
+    });
+
+    Sse::new(stream).keep_alive(KeepAlive::new().interval(Duration::from_secs(15)))
+}
+```
 
 ## Status
 
-**v0.0.5** — Stub. Implementation coming in v0.5.x.
+**v0.5.1** — Fully implemented.
 
 ## License
 

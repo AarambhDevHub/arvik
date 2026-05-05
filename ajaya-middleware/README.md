@@ -6,9 +6,9 @@
 
 **Built-in middleware for the Ajaya web framework.**
 
-This crate will provide Tower-compatible middleware layers for common web application needs.
+This crate provides Tower-compatible middleware layers for common web application needs.
 
-## Planned Features (v0.4.x)
+## Features (v0.5.1)
 
 - `CorsLayer` — Full CORS spec implementation
 - `CompressionLayer` — gzip, brotli, zstd, deflate
@@ -22,7 +22,7 @@ This crate will provide Tower-compatible middleware layers for common web applic
 
 ## Status
 
-**v0.0.5** — Stub. Implementation coming in v0.4.x.
+**v0.5.1** — Fully implemented.
 
 ## License
 

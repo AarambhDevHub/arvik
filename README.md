@@ -6,7 +6,7 @@
 
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
-[![Version](https://img.shields.io/badge/version-0.5.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.1-green.svg)](CHANGELOG.md)
 [![Discord](https://img.shields.io/discord/placeholder?label=discord&logo=discord&logoColor=white)](https://discord.gg/HDth6PfCnp)
 
 </div>
@@ -17,7 +17,7 @@
 
 **Ajaya** (अजय, *"The Unconquerable"*) is a high-performance Rust web framework built from the ground up on **Tokio** and **Hyper 1.x**. It aims to unify the best features of Axum and Actix-web under one ergonomic, blazing-fast API.
 
-> 🔱 **v0.5.0 — WebSocket Support** Ajaya now has full WebSocket support with auto-pong, split send/receive, subprotocol negotiation, and RFC 6455 compliant upgrade. Follow along on [YouTube](https://youtube.com/@AarambhDevHub) or join the [Discord](https://discord.gg/HDth6PfCnp) to track progress.
+> 🔱 **v0.5.1 — Server-Sent Events (SSE)** Ajaya now has full zero-allocation SSE support with auto-keep-alive, `json_data` serialisation, and stream integration. Follow along on [YouTube](https://youtube.com/@AarambhDevHub) or join the [Discord](https://discord.gg/HDth6PfCnp) to track progress.
 
 ---
 
@@ -47,7 +47,7 @@ curl http://localhost:8080/not-a-route
 
 ---
 
-## Features (v0.5.0)
+## Features (v0.5.1)
 
 ### ✅ Type-Safe Extractors
 
@@ -235,6 +235,41 @@ let app = Router::new()
 | Typed rejections | `WebSocketUpgradeRejection` with correct HTTP codes |
 | RFC 6455 compliant | SHA-1 accept key, full close code enum |
 
+### ✅ Server-Sent Events (SSE)
+
+Full Server-Sent Events support via `ajaya-sse`. Send real-time updates to the browser with built-in keep-alive pings and zero-allocation string rendering.
+
+> **SSE is opt-in.** Enable it by adding the `sse` feature to your `Cargo.toml`:
+>
+> ```toml
+> ajaya = { version = "0.5", features = ["sse"] }
+> ```
+
+```rust
+use ajaya::{Router, get};
+use ajaya::sse::{Event, KeepAlive, Sse};
+use std::time::Duration;
+use tokio_stream::StreamExt as _;
+
+async fn json_stream() -> Sse<impl futures_util::Stream<Item = Result<Event, serde_json::Error>>> {
+    let stream = tokio_stream::wrappers::IntervalStream::new(
+        tokio::time::interval(Duration::from_millis(500)),
+    )
+    .enumerate()
+    .map(|(i, _): (usize, _)| {
+        Event::default()
+            .event("metric")
+            .id(i.to_string())
+            .json_data(&serde_json::json!({ "seq": i }))
+    });
+
+    // Automatically send a `: \n\n` comment every 10 seconds to keep proxies alive
+    Sse::new(stream).keep_alive(KeepAlive::new().interval(Duration::from_secs(10)))
+}
+
+let app = Router::new().route("/stream", get(json_stream));
+```
+
 ---
 
 ## Workspace Structure
@@ -269,8 +304,8 @@ See [ROADMAP.md](ROADMAP.md) for the complete version-by-version plan.
 | **0.3.x** | Responses & Error Handling | ✅ Complete |
 | **0.4.x** | Middleware | ✅ Complete |
 | **0.5.x** | WebSocket | ✅ Complete |
-| 0.5.1 | Server-Sent Events (SSE) | ⏳ Next |
-| 0.6.x | TLS, HTTP/2, Static Files | ⏳ Planned |
+| **0.5.1** | Server-Sent Events (SSE) | ✅ Complete |
+| 0.6.x | TLS, HTTP/2, Static Files | ⏳ Next |
 | 0.7.x | Macros, Testing, Config | ⏳ Planned |
 | 0.8.x | Observability & Security | ⏳ Planned |
 | 0.9.x | Performance Sprint | ⏳ Planned |

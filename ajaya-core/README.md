@@ -22,7 +22,7 @@ This crate provides the foundational abstractions that all other Ajaya crates bu
 
 ## Status
 
-**v0.1.6** — Core implementations are integrated and stable against the v0.1.x routing system.
+**v0.5.1** — Core implementations are integrated and stable against the v0.5.x routing system.
 
 ## License
 

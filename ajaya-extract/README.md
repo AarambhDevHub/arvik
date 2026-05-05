@@ -6,9 +6,9 @@
 
 **Request extractors for the Ajaya web framework.**
 
-This crate will provide type-safe extraction of data from HTTP requests.
+This crate provides type-safe extraction of data from HTTP requests.
 
-## Planned Features (v0.2.x)
+## Features (v0.5.1)
 
 - `FromRequestParts` and `FromRequest` traits
 - `Path<T>` — URL path parameters via serde
@@ -22,7 +22,7 @@ This crate will provide type-safe extraction of data from HTTP requests.
 
 ## Status
 
-**v0.0.5** — Stub. Implementation coming in v0.2.x.
+**v0.5.1** — Fully implemented.
 
 ## License
 

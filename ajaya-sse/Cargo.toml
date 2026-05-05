@@ -9,3 +9,13 @@ rust-version.workspace = true
 description = "Server-Sent Events for the Ajaya web framework"
 
 [dependencies]
+ajaya-core       = { workspace = true }
+http             = { workspace = true }
+http-body        = { workspace = true }
+bytes            = { workspace = true }
+futures-util     = { workspace = true }
+pin-project-lite = { workspace = true }
+tokio            = { workspace = true }
+itoa             = { workspace = true }
+serde            = { workspace = true }
+serde_json       = { workspace = true }

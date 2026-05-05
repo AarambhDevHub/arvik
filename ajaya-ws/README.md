@@ -6,9 +6,9 @@
 
 **WebSocket support for the Ajaya web framework.**
 
-This crate will provide WebSocket upgrade handling and bidirectional messaging.
+This crate provides WebSocket upgrade handling and bidirectional messaging.
 
-## Planned Features (v0.5.x)
+## Features (v0.5.1)
 
 - `WebSocketUpgrade` extractor for HTTP upgrade
 - `WebSocket` stream with `.send()` and `.recv()`
@@ -19,7 +19,7 @@ This crate will provide WebSocket upgrade handling and bidirectional messaging.
 
 ## Status
 
-**v0.0.5** — Stub. Implementation coming in v0.5.x.
+**v0.5.1** — Fully implemented.
 
 ## License
 

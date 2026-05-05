@@ -9,6 +9,84 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.1] — 2026-05-05 — Server-Sent Events
+
+### Added
+
+**`ajaya-sse`** — Full Server-Sent Events streaming crate.
+
+- `Event` — Zero-allocation SSE event builder:
+  - `.data(impl Into<String>)` — payload; multi-line values split into multiple `data:` lines
+  - `.id(impl Into<String>)` — event ID; browser sends `Last-Event-ID` on reconnect
+  - `.event(impl Into<String>)` — event type; clients filter with `addEventListener`
+  - `.retry(Duration)` — client reconnection hint (serialised as milliseconds)
+  - `.comment(impl Into<String>)` — comment line (`: text\n`), used for keep-alive pings
+  - `.json_data<T: Serialize>(&T) -> Result<Self, serde_json::Error>` — serialize any
+    `Serialize` type directly as the `data` field; avoids boilerplate `to_string().unwrap()`
+  - `Event::serialize() -> Bytes` — produces wire bytes in one pre-allocated pass using
+    `itoa` for integer fields; no heap allocation beyond the initial `BytesMut`
+
+- `Sse<S>` — `IntoResponse` wrapper for `Stream<Item = Result<Event, E>>`:
+  - Sets `Content-Type: text/event-stream`, `Cache-Control: no-cache`,
+    `X-Accel-Buffering: no` (prevents nginx from buffering the stream)
+  - `.keep_alive(KeepAlive)` — attaches a periodic comment sender
+  - Works with any `Stream` — `futures_util::stream::iter`, `tokio_stream`, channels, etc.
+  - `SseBody` implements `http_body::Body` directly (no intermediate buffering);
+    events flow from stream → serialised `Bytes` → TCP without extra copies
+  - `SseBody` is `Unpin` (boxed stream + boxed sleep), satisfying `Body::new`'s bound
+
+- `KeepAlive` — idle-connection keep-alive configuration:
+  - `.interval(Duration)` — how often to fire when stream is idle (default: 15 s)
+  - `.text(impl AsRef<str>)` — comment text; pre-serialised once at construction time
+    so the hot path only does a ref-count bump (`Bytes::clone`)
+  - Default: 15-second interval, empty comment (`: \n\n`)
+  - Timer resets on every real event so the interval always measures idle time
+
+- **`ajaya`** facade:
+  - `use ajaya::sse::{Event, KeepAlive, Sse}` — full module (feature = `"sse"`)
+  - `use ajaya::{Sse, SseEvent, SseKeepAlive}` — top-level convenience aliases
+  - Enable with `ajaya = { version = "0.5", features = ["sse"] }` in `Cargo.toml`
+
+- **`examples/sse_demo`** — SSE demonstration binary with all three patterns in one file:
+  - `GET /counter` — simple integer counter, one tick per second
+  - `GET /json-stream` — structured `Metric` JSON payload via `.json_data()` at 500 ms
+  - `GET /notifications` — `tokio::sync::broadcast` fan-out; `POST /notify` body is sent
+    to every subscriber; lagged receivers are silently skipped via `BroadcastStream`
+  - `GET /` — embedded HTML page with live-updating UI for all three streams
+
+### Changed
+
+- `ajaya-sse/Cargo.toml` — populated from stub: added `ajaya-core`, `http`, `bytes`,
+  `futures-util`, `pin-project-lite`, `tokio`, `itoa`, `serde`, `serde_json` dependencies
+- `ajaya/Cargo.toml` — added `ajaya-sse` as optional dep behind `sse` feature flag
+- `Cargo.toml` (workspace) — added `ajaya-sse` to `[workspace.dependencies]`;
+  added `examples/sse_demo` to workspace members
+- `ROADMAP.md` §0.5.1 — marked all SSE items ✅
+- `Event::serialize()` promoted from `pub(crate)` to `pub` — enables inspection
+  in integration tests and examples outside the crate
+- `#[must_use]` added to `Event`, `KeepAlive`, and `Sse<S>` — the compiler now
+  warns if a builder chain result is silently dropped
+
+### Fixed
+
+- **SSE spec compliance — input normalization** (`event.rs`):
+  - `.data()` and `.comment()` now normalize `\r\n` and lone `\r` to `\n` (SSE spec §9.2);
+    raw `\r` in the wire stream breaks the browser parser
+  - `.id()` strips `U+0000 NULL` bytes — browsers silently ignore `id` fields
+    containing null (SSE spec §9.2)
+  - `.event()` truncates at the first `\n` or `\r` — multi-line event names are
+    invalid per spec and silently ignored by browsers
+- **`estimate_wire_len` off-by-one for multi-line `data`** (`event.rs`):
+  - Previous formula `lines * 7 + data.len()` double-counted the `\n` separators
+    consumed by splitting; corrected to `lines * 7 + data.len() - (lines - 1)`
+- **`estimate_wire_len` wrong digit bound for `retry`** (`event.rs`):
+  - Comment claimed "up to 7 digits"; `u64::MAX` has 20 digits; corrected to 20
+- **`dead_code` warning on `is_empty_event`** (`event.rs`):
+  - Removed unused `pub(crate) fn is_empty_event` — leftover from an earlier design
+    pass; an empty `Event` serialises to only `\n` which browsers silently ignore
+
+---
+
 ## [0.5.0] — 2026-05-04 — WebSocket Support
 
 ### Added

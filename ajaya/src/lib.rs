@@ -217,7 +217,7 @@ pub use ajaya_middleware::trace::{DefaultMakeSpan, LatencyUnit, TraceLayer};
 pub use ajaya_router::layer::{BoxCloneService, LayerFn};
 
 // ---------------------------------------------------------------------------
-// WebSocket support (0.5.x) — feature = "ws" (enabled by default)
+// WebSocket support (0.5.x) — feature = "ws"
 // ---------------------------------------------------------------------------
 
 /// WebSocket upgrade and messaging.
@@ -252,3 +252,43 @@ pub mod ws {
 // Top-level convenience — most common types (feature = "ws")
 #[cfg(feature = "ws")]
 pub use ajaya_ws::{Message as WsMessage, WebSocket, WebSocketUpgrade};
+
+// ---------------------------------------------------------------------------
+// Server-Sent Events (0.5.1) — feature = "sse"
+// ---------------------------------------------------------------------------
+
+/// Server-Sent Events streaming.
+///
+/// Enable via the `sse` feature flag:
+///
+/// ```toml
+/// ajaya = { version = "0.5", features = ["sse"] }
+/// ```
+///
+/// # Quick start
+///
+/// ```rust,ignore
+/// use ajaya::sse::{Event, KeepAlive, Sse};
+/// use std::{convert::Infallible, time::Duration};
+/// use tokio_stream::StreamExt as _;
+///
+/// async fn clock() -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
+///     let stream = tokio_stream::wrappers::IntervalStream::new(
+///         tokio::time::interval(Duration::from_secs(1)),
+///     )
+///     .enumerate()
+///     .map(|(i, _)| Ok(Event::default().id(i.to_string()).data(i.to_string())));
+///
+///     Sse::new(stream).keep_alive(KeepAlive::new())
+/// }
+///
+/// let app = Router::new().route("/events", get(clock));
+/// ```
+#[cfg(feature = "sse")]
+pub mod sse {
+    pub use ajaya_sse::{Event, KeepAlive, Sse};
+}
+
+// Top-level convenience re-exports (feature = "sse")
+#[cfg(feature = "sse")]
+pub use ajaya_sse::{Event as SseEvent, KeepAlive as SseKeepAlive, Sse};

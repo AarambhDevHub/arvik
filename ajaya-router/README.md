@@ -18,7 +18,7 @@
 
 ## Status
 
-**v0.1.6** — Complete Routing System implemented. Path extraction, Trie-routing, Wildcards, and Tower Service routing functionality is stable.
+**v0.5.1** — Complete Routing System implemented. Path extraction, Trie-routing, Wildcards, and Tower Service routing functionality is stable.
 
 ## License
 
