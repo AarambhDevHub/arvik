@@ -100,11 +100,7 @@ impl Event {
     /// invalid per the SSE spec and silently ignored by browsers.
     pub fn event(mut self, event: impl Into<String>) -> Self {
         let s = event.into();
-        let s = s
-            .split(['\n', '\r'])
-            .next()
-            .unwrap_or("")
-            .to_owned();
+        let s = s.split(['\n', '\r']).next().unwrap_or("").to_owned();
         self.event = Some(s);
         self
     }
