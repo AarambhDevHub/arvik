@@ -529,11 +529,11 @@
 ### `0.5.1` — Server-Sent Events
 **Goal:** One-directional event streaming to clients.
 
-- [ ] `ajaya-sse`: `Sse<S>` response type
-- [ ] `Event` builder: `.data()`, `.id()`, `.event()`, `.retry()`
-- [ ] `KeepAlive` — sends comment lines to prevent connection timeout
-- [ ] Works with any `Stream<Item = Result<Event, E>>`
-- [ ] Proper `Content-Type: text/event-stream` + `Cache-Control: no-cache`
+- [x] `ajaya-sse`: `Sse<S>` response type
+- [x] `Event` builder: `.data()`, `.id()`, `.event()`, `.retry()`
+- [x] `KeepAlive` — sends comment lines to prevent connection timeout
+- [x] Works with any `Stream<Item = Result<Event, E>>`
+- [x] Proper `Content-Type: text/event-stream` + `Cache-Control: no-cache`
 
 **Deliverable:** Live feed / notification stream to browser EventSource.
 

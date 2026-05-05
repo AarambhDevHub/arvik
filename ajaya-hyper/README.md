@@ -39,6 +39,10 @@ async fn main() {
 - HTTP/1.1 and HTTP/2 support via ALPN
 - Tracing integration for connection logging
 
+## Status
+
+**v0.5.1** — Fully implemented and stable.
+
 ## License
 
 Licensed under either of [Apache License, Version 2.0](../LICENSE-APACHE) or [MIT License](../LICENSE-MIT) at your option.
