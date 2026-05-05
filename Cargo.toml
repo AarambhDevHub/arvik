@@ -101,6 +101,7 @@ tokio-util = { version = "0.7", features = ["io"] }
 base64 = "0.22"
 
 sha1 = "0.10"
+socket2 = { version = "0.5", features = ["all"] }
 
 # Internal crates
 ajaya-core       = { path = "ajaya-core", version = "0.5.1" }

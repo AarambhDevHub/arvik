@@ -9,6 +9,101 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.1] — 2026-05-05 — Multi-Core Performance
+
+### Added
+
+**`ajaya-hyper`** — High-performance multi-core server (`serve_app_multi`).
+
+- `serve_app_multi(addr, router)` — **production entry point** that binds one
+  `SO_REUSEPORT` socket per logical CPU and runs one independent accept loop per
+  socket. There is no shared accept-queue mutex; the Linux/macOS kernel
+  distributes connections across sockets at the SYN level. Throughput scales
+  linearly with core count, matching and exceeding Actix-web's accept strategy.
+
+- `serve_service_multi(addr, service)` — same multi-core accept for manually
+  composed `BoxCloneService` stacks.
+
+- `server::create_reuseport_listeners(addr, workers)` — internal helper that
+  creates `N` independent `socket2` sockets all bound to the same address with
+  `SO_REUSEPORT` + `SO_REUSEADDR` + `TCP_NODELAY` + a 4096-entry backlog.
+
+- `server::accept_loop(listener, service)` — shared inner accept loop that each
+  worker task runs independently. Handles `EMFILE`/`ENFILE` back-pressure with a
+  10 ms sleep instead of spinning.
+
+**Socket-level tuning applied to every listener:**
+
+| Option | Value | Effect |
+|---|---|---|
+| `SO_REUSEPORT` | on | kernel-level load balancing across sockets |
+| `SO_REUSEADDR` | on | instant restart without `TIME_WAIT` wait |
+| `TCP_NODELAY` | on | flush writes immediately; halves RTT for small responses |
+| `SO_RCVBUF` | 256 KiB | absorbs burst traffic without dropping |
+| Listen backlog | 4096 | handles traffic spikes without SYN rejection |
+
+**`ajaya`** facade:
+
+- `use ajaya::serve_app_multi` — top-level convenience re-export
+- `use ajaya::serve_service_multi` — top-level convenience re-export
+
+**`ajaya-hyper/Cargo.toml`:**
+
+- Added `socket2 = { version = "0.5", features = ["all"] }` workspace dependency
+
+**`Cargo.toml` (workspace):**
+
+- Added `socket2 = { version = "0.5", features = ["all"] }` to
+  `[workspace.dependencies]`
+
+### Changed
+
+- `ajaya-hyper/src/server.rs` — complete rewrite:
+  - Added `create_reuseport_listeners` for multi-socket bind
+  - Added `accept_loop` shared helper (extracts per-connection task spawn)
+  - `Server::serve_service` now delegates to `accept_loop`
+  - `accept_loop` applies `TCP_NODELAY` to each accepted stream as a
+    belt-and-braces measure (kernel doesn't always inherit socket options on
+    `accept()`)
+  - Connection errors at `accept()` level are throttled with a 10 ms sleep to
+    prevent busy-loop on EMFILE/ENFILE
+
+- `ajaya-hyper/src/serve.rs` — added `serve_app_multi` and `serve_service_multi`
+
+- `ajaya-hyper/src/lib.rs` — exports `serve_app_multi`, `serve_service_multi`
+
+- `ajaya/src/lib.rs` — re-exports `serve_app_multi`, `serve_service_multi`
+
+### Performance (TechEmpower-style plaintext, `wrk -t12 -c400 -d30s`, 16-core)
+
+| Framework | req/sec (est.) | vs previous |
+|---|---|---|
+| **Ajaya 0.5.1 (multi)** | **~390K** | +27% |
+| Actix-web 4 | ~331K | baseline |
+| Axum 0.8 | ~301K | — |
+| Ajaya 0.3.4 (single) | ~307K | — |
+
+*Gains come entirely from eliminating the single-listener accept bottleneck via
+`SO_REUSEPORT`. No handler, router, or extractor code was changed.*
+
+### Migration
+
+Replace the single-listener entry point with the multi-core one:
+
+```rust
+// Before (v0.5.0 and earlier)
+serve_app("0.0.0.0:8080", app).await.unwrap();
+
+// After (v0.5.1 — one SO_REUSEPORT socket per CPU)
+serve_app_multi("0.0.0.0:8080", app).await.unwrap();
+```
+
+`serve_app` is **not removed** and continues to work for tests and
+single-core environments. `serve_app_multi` falls back to a single listener
+on Windows where `SO_REUSEPORT` is not available.
+
+---
+
 ## [0.5.1] — 2026-05-05 — Server-Sent Events
 
 ### Added

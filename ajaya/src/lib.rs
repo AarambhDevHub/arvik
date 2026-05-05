@@ -139,7 +139,14 @@ pub use ajaya_extract::rejection;
 // Server functionality
 // ---------------------------------------------------------------------------
 pub use ajaya_hyper::Server;
-pub use ajaya_hyper::{serve, serve_app, serve_router};
+pub use ajaya_hyper::{
+    serve,
+    serve_app,
+    serve_app_multi, // ← HIGH-PERFORMANCE entry point (SO_REUSEPORT, per-CPU)
+    serve_router,
+    serve_service,
+    serve_service_multi, // ← HIGH-PERFORMANCE for manual tower stacks
+};
 
 // ---------------------------------------------------------------------------
 // Middleware  (0.4.x)
