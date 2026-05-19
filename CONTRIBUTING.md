@@ -1,6 +1,6 @@
-# Contributing to Ajaya
+# Contributing to Arvik
 
-First off, thank you for considering contributing to **Ajaya (अजय)**! Every contribution helps make this framework more unconquerable. 🔱
+First off, thank you for considering contributing to **Arvik (अजय)**! Every contribution helps make this framework more unconquerable. ⚡
 
 ## Table of Contents
 
@@ -24,13 +24,13 @@ By participating, you are expected to uphold this code.
 
 To report unacceptable behavior, use one of these channels:
 - **Discord:** Join the [Aarambh Dev Hub Discord](https://discord.gg/HDth6PfCnp) and open a private message to the maintainer
-- **GitHub:** Open a [private security advisory](https://github.com/AarambhDevHub/ajaya/security/advisories/new) for sensitive reports
+- **GitHub:** Open a [private security advisory](https://github.com/AarambhDevHub/arvik/security/advisories/new) for sensitive reports
 
 ---
 
 ## Getting Started
 
-Ajaya is a Rust workspace with 12 crates. Before contributing, please familiarize yourself with:
+Arvik is a Rust workspace with 12 crates. Before contributing, please familiarize yourself with:
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — Full technical specification
 - [ROADMAP.md](ROADMAP.md) — Version-by-version development plan
@@ -50,8 +50,8 @@ Ajaya is a Rust workspace with 12 crates. Before contributing, please familiariz
 
 ```bash
 # Clone the repository
-git clone https://github.com/AarambhDevHub/ajaya.git
-cd ajaya
+git clone https://github.com/AarambhDevHub/arvik.git
+cd arvik
 
 # Build all crates
 cargo build --workspace
@@ -67,7 +67,7 @@ cargo fmt --all -- --check
 
 ```bash
 # Start the development server
-cargo run -p ajaya
+cargo run -p arvik
 
 # Test it
 curl http://localhost:8080
@@ -80,7 +80,7 @@ curl http://localhost:8080
 ### 1. Find Something to Work On
 
 - Check the [ROADMAP.md](ROADMAP.md) for the current milestone
-- Look for [open issues](https://github.com/AarambhDevHub/ajaya/issues) tagged `good first issue` or `help wanted`
+- Look for [open issues](https://github.com/AarambhDevHub/arvik/issues) tagged `good first issue` or `help wanted`
 - Check if the feature you want is already planned in the roadmap
 - Ask in the [Aarambh Dev Hub Discord](https://discord.gg/HDth6PfCnp) if you're unsure where to start
 
@@ -88,8 +88,8 @@ curl http://localhost:8080
 
 ```bash
 # Fork the repo on GitHub, then:
-git clone https://github.com/YOUR_USERNAME/ajaya.git
-cd ajaya
+git clone https://github.com/YOUR_USERNAME/arvik.git
+cd arvik
 git checkout -b feature/your-feature-name
 ```
 
@@ -208,7 +208,7 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) specific
 
 ### Scopes
 
-Use the crate name without the `ajaya-` prefix: `core`, `router`, `hyper`, `extract`, `middleware`, `ws`, `sse`, `static`, `tls`, `macros`, `test`.
+Use the crate name without the `arvik-` prefix: `core`, `router`, `hyper`, `extract`, `middleware`, `ws`, `sse`, `static`, `tls`, `macros`, `test`.
 
 ---
 
@@ -216,7 +216,7 @@ Use the crate name without the `ajaya-` prefix: `core`, `router`, `hyper`, `extr
 
 ### Before Reporting
 
-1. Check existing [issues](https://github.com/AarambhDevHub/ajaya/issues) — it might already be reported
+1. Check existing [issues](https://github.com/AarambhDevHub/arvik/issues) — it might already be reported
 2. Try the latest version — the bug might be fixed
 3. Create a minimal reproduction case
 
@@ -238,7 +238,7 @@ What you expected to happen.
 What actually happened.
 
 ## Environment
-- Ajaya version: 0.0.1
+- Arvik version: 0.0.1
 - Rust version: 1.85
 - OS: Linux / macOS / Windows
 ```
@@ -248,9 +248,9 @@ What actually happened.
 ## Suggesting Features
 
 1. Check the [ROADMAP.md](ROADMAP.md) — it might already be planned
-2. Open a [GitHub Discussion](https://github.com/AarambhDevHub/ajaya/discussions) first for larger features
+2. Open a [GitHub Discussion](https://github.com/AarambhDevHub/arvik/discussions) first for larger features
 3. For smaller features, open an issue with the `enhancement` label
-4. Chat about ideas in the [Aarambh Dev Hub Discord](https://discord.gg/HDth6PfCnp) `#ajaya` channel
+4. Chat about ideas in the [Aarambh Dev Hub Discord](https://discord.gg/HDth6PfCnp) `#arvik` channel
 
 ---
 
@@ -260,32 +260,32 @@ When contributing, it helps to know where things live:
 
 | Crate | What it does | Status |
 |-------|-------------|--------|
-| `ajaya` | Facade — re-exports everything | Active |
-| `ajaya-core` | Request, Response, Body, Error | Active |
-| `ajaya-hyper` | Hyper server integration | Active |
-| `ajaya-router` | Radix trie routing | Stub |
-| `ajaya-extract` | Extractors (Path, Query, Json) | Stub |
-| `ajaya-middleware` | CORS, compression, timeout | Stub |
-| `ajaya-ws` | WebSocket | Stub |
-| `ajaya-sse` | Server-Sent Events | Stub |
-| `ajaya-static` | Static file serving | Stub |
-| `ajaya-tls` | TLS / HTTPS | Stub |
-| `ajaya-macros` | Proc macros | Stub |
-| `ajaya-test` | Test utilities | Stub |
+| `arvik` | Facade — re-exports everything | Active |
+| `arvik-core` | Request, Response, Body, Error | Active |
+| `arvik-hyper` | Hyper server integration | Active |
+| `arvik-router` | Radix trie routing | Stub |
+| `arvik-extract` | Extractors (Path, Query, Json) | Stub |
+| `arvik-middleware` | CORS, compression, timeout | Stub |
+| `arvik-ws` | WebSocket | Stub |
+| `arvik-sse` | Server-Sent Events | Stub |
+| `arvik-static` | Static file serving | Stub |
+| `arvik-tls` | TLS / HTTPS | Stub |
+| `arvik-macros` | Proc macros | Stub |
+| `arvik-test` | Test utilities | Stub |
 
 ---
 
 ## Community
 
-- 💬 **Discord:** [Aarambh Dev Hub](https://discord.gg/HDth6PfCnp) — `#ajaya` channel for questions and discussion
-- 🐙 **GitHub Discussions:** [github.com/AarambhDevHub/ajaya/discussions](https://github.com/AarambhDevHub/ajaya/discussions)
+- 💬 **Discord:** [Aarambh Dev Hub](https://discord.gg/HDth6PfCnp) — `#arvik` channel for questions and discussion
+- 🐙 **GitHub Discussions:** [github.com/AarambhDevHub/arvik/discussions](https://github.com/AarambhDevHub/arvik/discussions)
 - 📺 **YouTube:** [Aarambh Dev Hub](https://youtube.com/@AarambhDevHub) — follow the build in public series
 
 ---
 
 ## License
 
-By contributing to Ajaya, you agree that your contributions will be licensed under
+By contributing to Arvik, you agree that your contributions will be licensed under
 the same dual license as the project:
 
 - [MIT License](LICENSE-MIT)
@@ -293,4 +293,4 @@ the same dual license as the project:
 
 ---
 
-*Thank you for helping make Ajaya unconquerable!* 🔱
+*Thank you for helping make Arvik unconquerable!* ⚡

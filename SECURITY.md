@@ -1,6 +1,6 @@
 # Security Policy
 
-Ajaya is a web framework — security vulnerabilities in it can affect every
+Arvik is a web framework — security vulnerabilities in it can affect every
 application built on top of it. We take security seriously and appreciate
 responsible disclosure from the community.
 
@@ -17,7 +17,7 @@ and the upgrade path is blocked.
 | Latest     | ✅ Active support  |
 | Older      | ❌ Upgrade to latest |
 
-Once Ajaya reaches `1.0.0`, an LTS policy will be defined here.
+Once Arvik reaches `1.0.0`, an LTS policy will be defined here.
 
 ---
 
@@ -25,10 +25,10 @@ Once Ajaya reaches `1.0.0`, an LTS policy will be defined here.
 
 The following are **in scope** for this security policy:
 
-- All crates in the `ajaya` workspace:
-  `ajaya`, `ajaya-core`, `ajaya-router`, `ajaya-hyper`, `ajaya-extract`,
-  `ajaya-middleware`, `ajaya-ws`, `ajaya-sse`, `ajaya-static`, `ajaya-tls`,
-  `ajaya-macros`, `ajaya-test`
+- All crates in the `arvik` workspace:
+  `arvik`, `arvik-core`, `arvik-router`, `arvik-hyper`, `arvik-extract`,
+  `arvik-middleware`, `arvik-ws`, `arvik-sse`, `arvik-static`, `arvik-tls`,
+  `arvik-macros`, `arvik-test`
 - Security issues caused by incorrect documentation that leads users to
   write insecure code
 - Vulnerabilities introduced via our direct dependencies that we can
@@ -48,13 +48,13 @@ The following are **out of scope**:
 ## Reporting a Vulnerability
 
 **Please do NOT open a public GitHub issue for security vulnerabilities.**
-Public disclosure before a patch is ready puts every Ajaya user at risk.
+Public disclosure before a patch is ready puts every Arvik user at risk.
 
 ### How to Report
 
 **Option 1 — GitHub Private Advisory (Preferred)**
 
-1. Go to the [Ajaya Security Advisories](https://github.com/aarambh-darshan/ajaya/security/advisories/new)
+1. Go to the [Arvik Security Advisories](https://github.com/aarambh-darshan/arvik/security/advisories/new)
 2. Click **"Report a vulnerability"**
 3. Fill in the details — see the template below
 
@@ -74,7 +74,7 @@ Vulnerability Type:
   (e.g. SQL injection, path traversal, denial of service, memory unsafety, etc.)
 
 Affected Crate(s):
-  (e.g. ajaya-router 0.1.2)
+  (e.g. arvik-router 0.1.2)
 
 Affected Component:
   (e.g. Path extractor, ServeDir, WebSocket upgrade)
@@ -100,7 +100,7 @@ Suggested Fix (optional):
   If you have ideas on how to fix it.
 
 Environment:
-  - Ajaya version:
+  - Arvik version:
   - Rust version (rustc --version):
   - OS:
 ```
@@ -138,9 +138,9 @@ possible.
 
 ---
 
-## Security Best Practices for Ajaya Users
+## Security Best Practices for Arvik Users
 
-While using Ajaya, we recommend:
+While using Arvik, we recommend:
 
 - **Always set a body size limit:**
   ```rust
@@ -167,7 +167,7 @@ While using Ajaya, we recommend:
 
 - **Use `PrivateCookieJar`** for session data, not plain `CookieJar`.
 
-- **Keep Ajaya and all dependencies up to date.** Run:
+- **Keep Arvik and all dependencies up to date.** Run:
   ```bash
   cargo update
   cargo audit  # requires cargo-audit
@@ -178,7 +178,7 @@ While using Ajaya, we recommend:
 ## Known Security Advisories
 
 Security advisories will be published at:
-[https://github.com/aarambh-darshan/ajaya/security/advisories](https://github.com/aarambh-darshan/ajaya/security/advisories)
+[https://github.com/aarambh-darshan/arvik/security/advisories](https://github.com/aarambh-darshan/arvik/security/advisories)
 
 No advisories have been issued yet.
 
@@ -189,8 +189,8 @@ No advisories have been issued yet.
 We gratefully acknowledge security researchers who responsibly disclose
 vulnerabilities to us. Contributors will be listed here with their permission.
 
-*No entries yet — Ajaya is young. Be the first!*
+*No entries yet — Arvik is young. Be the first!*
 
 ---
 
-*Ajaya (अजय) — Unconquerable. Built by Aarambh Dev Hub.*
+*Arvik (अजय) — Unconquerable. Built by Aarambh Dev Hub.*

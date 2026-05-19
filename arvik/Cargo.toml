@@ -1,0 +1,36 @@
+[package]
+name = "arvik"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+description = "Arvik — Fast, Typed, and Fearless Web Framework for Rust"
+
+[dependencies]
+arvik-core    = { workspace = true }
+arvik-hyper   = { workspace = true }
+arvik-router  = { workspace = true }
+arvik-extract = { workspace = true }
+arvik-middleware = { workspace = true }
+arvik-ws      = { workspace = true, optional = true }
+arvik-sse        = { workspace = true, optional = true }
+tokio         = { workspace = true }
+http          = { workspace = true }
+bytes         = { workspace = true }
+serde         = { workspace = true }
+serde_json    = { workspace = true }
+tracing       = { workspace = true }
+tracing-subscriber = { workspace = true }
+cookie           = { workspace = true }
+futures-util     = { workspace = true }
+tower-layer   = { workspace = true }
+tower-service = { workspace = true }
+uuid = { workspace = true }
+
+[features]
+default = []
+ws = ["dep:arvik-ws"]
+sse = ["dep:arvik-sse"]

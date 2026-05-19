@@ -1,0 +1,27 @@
+[package]
+name = "arvik-middleware"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+description = "Built-in middleware for the Arvik web framework"
+
+[dependencies]
+arvik-core    = { workspace = true }
+arvik-router  = { workspace = true }    # for BoxCloneService + LayerFn types
+http          = { workspace = true }
+tower-service = { workspace = true }
+tower-layer   = { workspace = true }
+tracing       = { workspace = true }
+async-compression = { workspace = true }
+tokio-util        = { workspace = true }
+tokio             = { workspace = true }
+mime              = { workspace = true }
+uuid = { workspace = true }
+parking_lot = { workspace = true }
+base64 = { workspace = true }
+cookie = { workspace = true }
+http-body = { workspace = true }

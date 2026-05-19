@@ -1,6 +1,6 @@
 //! WebSocket multi-room chat server example.
 //!
-//! Run: cargo run -p ajaya --example websocket_chat --features ws
+//! Run: cargo run -p arvik --example websocket_chat --features ws
 //!
 //! Connect via browser: http://localhost:8080
 //! Connect via wscat:   wscat -c ws://localhost:8080/ws
@@ -16,8 +16,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use ajaya::ws::{Message, WebSocket, WebSocketUpgrade};
-use ajaya::{Html, IntoResponse, Path, Query, Router, State, get};
+use arvik::ws::{Message, WebSocket, WebSocketUpgrade};
+use arvik::{Html, IntoResponse, Path, Query, Router, State, get};
 use tokio::sync::{Mutex, broadcast};
 use tracing::info;
 use tracing_subscriber::EnvFilter;
@@ -60,7 +60,7 @@ impl Rooms {
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::new("info,ajaya=debug"))
+        .with_env_filter(EnvFilter::new("info,arvik=debug"))
         .init();
 
     let rooms = Rooms::default();
@@ -74,14 +74,14 @@ async fn main() {
 
     let addr = "0.0.0.0:8080";
     info!("Chat server listening on http://{addr}");
-    ajaya::serve_app(addr, app).await.unwrap();
+    arvik::serve_app(addr, app).await.unwrap();
 }
 
 // ── Handlers ──────────────────────────────────────────────────────────────────
 
 /// Return the current list of active rooms as JSON.
 async fn rooms_handler(State(rooms): State<Rooms>) -> impl IntoResponse {
-    use ajaya::Json;
+    use arvik::Json;
     let map = rooms.0.lock().await;
     let mut list: Vec<String> = map.keys().cloned().collect();
     // Always include the default rooms even if empty

@@ -1,4 +1,4 @@
-# Ajaya (अजय) — Public Roadmap
+# Arvik (अजय) — Public Roadmap
 
 > *From first TCP byte to unconquerable framework.*
 > Every version is a shipping, usable increment. No big-bang releases.
@@ -30,24 +30,24 @@
 
 - [x] Initialize Cargo workspace with all 12 crates
 - [x] All `Cargo.toml` files with correct dependencies
-- [x] `ajaya-core`: empty `lib.rs` stubs for `Request`, `Response`, `Body`, `Error`
-- [x] `ajaya-hyper`: raw Tokio + Hyper 1.x TCP listener (hardcoded "Hello World" response)
+- [x] `arvik-core`: empty `lib.rs` stubs for `Request`, `Response`, `Body`, `Error`
+- [x] `arvik-hyper`: raw Tokio + Hyper 1.x TCP listener (hardcoded "Hello World" response)
 - [x] CI: GitHub Actions — `cargo check`, `cargo clippy`, `cargo test`
 - [x] `README.md` skeleton
 
-**Deliverable:** `cargo run` → server starts on port 8080, returns "Hello from Ajaya" to every request.
+**Deliverable:** `cargo run` → server starts on port 8080, returns "Hello from Arvik" to every request.
 
 ---
 
 ### `0.0.2` — Core Types
 **Goal:** Real `Request` and `Response` types replacing raw Hyper types.
 
-- [x] `ajaya-core`: `Request<B>` wrapper around `http::Request<B>`
-- [x] `ajaya-core`: `Response<B>` type alias + `ResponseBuilder`
-- [x] `ajaya-core`: `Body` unified type (wraps `BoxBody`)
+- [x] `arvik-core`: `Request<B>` wrapper around `http::Request<B>`
+- [x] `arvik-core`: `Response<B>` type alias + `ResponseBuilder`
+- [x] `arvik-core`: `Body` unified type (wraps `BoxBody`)
 - [x] `Body::empty()`, `Body::from_bytes()`, `Body::to_bytes()` async
 - [x] `Extensions` typed map on `Request`
-- [x] Convert raw Hyper request/response ↔ Ajaya types in `ajaya-hyper`
+- [x] Convert raw Hyper request/response ↔ Arvik types in `arvik-hyper`
 
 **Deliverable:** Handlers receive `Request`, return `Response`. Fully typed.
 
@@ -56,11 +56,11 @@
 ### `0.0.3` — Handler Trait
 **Goal:** First version of the `Handler` trait.
 
-- [x] `ajaya-core`: `Handler<T, S>` trait definition
+- [x] `arvik-core`: `Handler<T, S>` trait definition
 - [x] Blanket impl for `async fn() -> impl IntoResponse` (zero extractors)
 - [x] Blanket impl for `async fn(Request) -> impl IntoResponse` (raw request)
 - [x] `IntoResponse` trait + impls for `StatusCode`, `String`, `&str`, `Bytes`, `(StatusCode, String)`
-- [x] Wire handler into `ajaya-hyper` serve loop
+- [x] Wire handler into `arvik-hyper` serve loop
 
 **Deliverable:** Write a bare async fn, pass it to the server, it works.
 
@@ -69,8 +69,8 @@
 ### `0.0.4` — Method Dispatch Skeleton
 **Goal:** Differentiate GET vs POST at the server level.
 
-- [x] `ajaya-core`: `MethodFilter` bitflag enum
-- [x] `ajaya-router`: `MethodRouter` struct (stores handlers per HTTP method)
+- [x] `arvik-core`: `MethodFilter` bitflag enum
+- [x] `arvik-router`: `MethodRouter` struct (stores handlers per HTTP method)
 - [x] `get()`, `post()`, `put()`, `delete()`, `patch()` constructor functions
 - [x] Return `405 Method Not Allowed` when method doesn't match
 - [x] Return `404 Not Found` for unknown paths (hardcoded fallback)
@@ -82,7 +82,7 @@
 ### `0.0.5` — Error Foundation
 **Goal:** Proper error type + `?` propagation in handlers.
 
-- [x] `ajaya-core`: `Error` struct with status + message
+- [x] `arvik-core`: `Error` struct with status + message
 - [x] `AjayaError` implements `std::error::Error` + `IntoResponse`
 - [x] `Result<T: IntoResponse, E: IntoResponse>` implements `IntoResponse`
 - [x] Handlers can return `Result<impl IntoResponse, impl IntoResponse>`
@@ -97,12 +97,12 @@
 ### `0.1.0` — Static Router
 **Goal:** Route requests to different handlers based on path.
 
-- [x] `ajaya-router`: `Router<S>` struct
+- [x] `arvik-router`: `Router<S>` struct
 - [x] `.route(path, method_router)` — registers a route
 - [x] Static path matching: `/`, `/users`, `/users/list`
 - [x] Internal `HashMap<&str, MethodRouter>` (not trie yet — keep it simple first)
 - [x] `Router` implements Tower `Service`
-- [x] Wire `Router` into `ajaya-hyper` serve loop
+- [x] Wire `Router` into `arvik-hyper` serve loop
 
 **Deliverable:** Multiple routes work. `/users` → one handler, `/posts` → another.
 
@@ -111,9 +111,9 @@
 ### `0.1.1` — Radix Trie Router
 **Goal:** Replace HashMap router with a real radix trie.
 
-- [x] `ajaya-router/src/trie.rs`: `TrieNode` with prefix, children, handler
-- [x] `ajaya-router/src/node.rs`: node insert + lookup logic
-- [x] `ajaya-router/src/params.rs`: `PathParams` — `SmallVec<[(&str, &str); 8]>`
+- [x] `arvik-router/src/trie.rs`: `TrieNode` with prefix, children, handler
+- [x] `arvik-router/src/node.rs`: node insert + lookup logic
+- [x] `arvik-router/src/params.rs`: `PathParams` — `SmallVec<[(&str, &str); 8]>`
 - [x] Route conflict detection at startup (panic with clear message)
 - [x] Benchmark: route lookup must be zero heap allocation
 
@@ -186,8 +186,8 @@
 ### `0.2.0` — Extractor Traits
 **Goal:** `FromRequestParts` and `FromRequest` trait definitions.
 
-- [x] `ajaya-core`: `FromRequestParts<S>` trait
-- [x] `ajaya-core`: `FromRequest<S, M>` trait
+- [x] `arvik-core`: `FromRequestParts<S>` trait
+- [x] `arvik-core`: `FromRequest<S, M>` trait
 - [x] `rejection.rs`: `Rejection` type + all built-in rejection variants
 - [x] `Rejection` implements `IntoResponse` with appropriate status codes
 - [x] Handler blanket impl updated to support up to 16 extractors (macro-generated)
@@ -335,7 +335,7 @@
 **Goal:** Complete error handling system.
 
 - [x] `HandleErrorLayer` — convert `BoxError` (from Tower layers) into responses
-- [x] `ajaya::error::ErrorResponse` — standard JSON error body `{ error, code, request_id }`
+- [x] `arvik::error::ErrorResponse` — standard JSON error body `{ error, code, request_id }`
 - [x] Map rejection types to custom error responses
 - [x] `IntoResponse` for `anyhow::Error` (behind feature flag)
 
@@ -354,7 +354,7 @@
 - [x] Layer ordering documentation (outermost first)
 - [x] `ServiceBuilder` usage pattern documented in examples
 
-**Deliverable:** Any Tower middleware works with Ajaya routers.
+**Deliverable:** Any Tower middleware works with Arvik routers.
 
 ---
 
@@ -508,7 +508,7 @@
 ### `0.5.0` — WebSocket Support ✅
 **Goal:** Full WebSocket upgrade and messaging.
 
-- [x] `ajaya-ws`: `WebSocketUpgrade` extractor — full RFC 6455 handshake validation
+- [x] `arvik-ws`: `WebSocketUpgrade` extractor — full RFC 6455 handshake validation
 - [x] `.on_upgrade(async fn(WebSocket))` callback — spawns handler as detached Tokio task
 - [x] `WebSocket`: `.send(Message)`, `.recv() -> Option<Result<Message>>`, `.close()`
 - [x] `Message` variants: `Text`, `Binary`, `Ping`, `Pong`, `Close`
@@ -520,7 +520,7 @@
 - [x] `WebSocketUpgradeRejection` — typed rejections with correct HTTP status codes
 - [x] SHA-1 accept key computation with RFC test vector unit test
 - [x] Subprotocol negotiation via `.protocols(["chat", "json"])`
-- [x] `ajaya` facade: `ajaya::ws` module + top-level `WebSocket`, `WebSocketUpgrade` re-exports
+- [x] `arvik` facade: `arvik::ws` module + top-level `WebSocket`, `WebSocketUpgrade` re-exports
 
 **Deliverable:** WebSocket echo server, chat server, and split concurrent examples working.
 
@@ -529,7 +529,7 @@
 ### `0.5.1` — Server-Sent Events
 **Goal:** One-directional event streaming to clients.
 
-- [x] `ajaya-sse`: `Sse<S>` response type
+- [x] `arvik-sse`: `Sse<S>` response type
 - [x] `Event` builder: `.data()`, `.id()`, `.event()`, `.retry()`
 - [x] `KeepAlive` — sends comment lines to prevent connection timeout
 - [x] Works with any `Stream<Item = Result<Event, E>>`
@@ -557,10 +557,10 @@
 ### `0.6.0` — rustls TLS
 **Goal:** HTTPS with rustls (no OpenSSL dependency).
 
-- [ ] `ajaya-tls`: `RustlsConfig` from PEM files
+- [ ] `arvik-tls`: `RustlsConfig` from PEM files
 - [ ] `RustlsConfig::from_pem()` — in-memory PEM
 - [ ] `RustlsConfig::self_signed()` — dev mode self-signed cert
-- [ ] `ajaya::serve_tls(app, addr, config)` entry point
+- [ ] `arvik::serve_tls(app, addr, config)` entry point
 - [ ] ALPN negotiation: prefer HTTP/2, fall back to HTTP/1.1
 
 **Deliverable:** `cargo run` → HTTPS server on port 443.
@@ -582,9 +582,9 @@
 ### `0.6.2` — native-tls Backend
 **Goal:** OpenSSL / SChannel / Secure Transport support.
 
-- [ ] `ajaya-tls`: `NativeTlsConfig` from PKCS12
+- [ ] `arvik-tls`: `NativeTlsConfig` from PKCS12
 - [ ] `NativeTlsConfig::from_pkcs12(data, password)`
-- [ ] `ajaya::serve_native_tls(app, addr, config)` entry point
+- [ ] `arvik::serve_native_tls(app, addr, config)` entry point
 - [ ] Feature flag: `native-tls` (disabled by default)
 
 **Deliverable:** TLS on Windows/macOS without bundling rustls.
@@ -595,7 +595,7 @@
 **Goal:** Optimal HTTP/2 performance settings.
 
 - [ ] `ServerConfig` HTTP/2 options: window sizes, concurrent streams, keep-alive
-- [ ] `ajaya::serve_h2c(app, addr)` — HTTP/2 over cleartext
+- [ ] `arvik::serve_h2c(app, addr)` — HTTP/2 over cleartext
 - [ ] Push promises (server push) API
 - [ ] HTTP/2 trailers support
 
@@ -606,7 +606,7 @@
 ### `0.6.4` — Static File Serving
 **Goal:** Serve files and directories efficiently.
 
-- [ ] `ajaya-static`: `ServeDir::new(path)` — serve directory tree
+- [ ] `arvik-static`: `ServeDir::new(path)` — serve directory tree
 - [ ] `ServeFile::new(path)` — serve single file
 - [ ] MIME type detection from extension
 - [ ] `Last-Modified` + `ETag` headers
@@ -638,7 +638,7 @@
 ### `0.7.0` — `#[debug_handler]` Macro
 **Goal:** Dramatically better compile errors.
 
-- [ ] `ajaya-macros`: `#[debug_handler]` proc macro
+- [ ] `arvik-macros`: `#[debug_handler]` proc macro
 - [ ] Points error at the offending extractor, not at `.route()` call site
 - [ ] Detects multiple body extractors
 - [ ] Detects missing state
@@ -654,7 +654,7 @@
 
 - [ ] `#[route(GET, "/path")]` attribute macro
 - [ ] `#[get("/path")]`, `#[post("/path")]` shorthand macros
-- [ ] `ajaya::collect_routes![fn1, fn2, fn3]` — gather all annotated handlers
+- [ ] `arvik::collect_routes![fn1, fn2, fn3]` — gather all annotated handlers
 - [ ] `Router::routes(collected)` — register all at once
 - [ ] Conflict detection at macro expansion time
 
@@ -676,7 +676,7 @@
 ### `0.7.3` — Test Client
 **Goal:** In-process testing without spinning up a real server.
 
-- [ ] `ajaya-test`: `TestClient::new(app)` — wraps router in memory
+- [ ] `arvik-test`: `TestClient::new(app)` — wraps router in memory
 - [ ] `client.get(path)`, `.post(path)`, `.put(path)`, `.delete(path)`, `.patch(path)`
 - [ ] Request builder: `.header()`, `.json()`, `.form()`, `.body()`, `.query()`
 - [ ] Response: `.status()`, `.headers()`, `.text().await`, `.json::<T>().await`, `.bytes().await`
@@ -696,7 +696,7 @@
 - [ ] Hot-reload config (debounced file watcher)
 - [ ] Config schema validation with human-readable errors
 
-**Deliverable:** `ajaya.toml` controls all server behavior, env vars override for production.
+**Deliverable:** `arvik.toml` controls all server behavior, env vars override for production.
 
 ---
 
@@ -719,7 +719,7 @@
 **Goal:** Production metrics out of the box.
 
 - [ ] `PrometheusMetricsLayer` — instruments all requests
-- [ ] Metrics: `ajaya_requests_total`, `ajaya_request_duration_seconds`, `ajaya_requests_in_flight`, `ajaya_response_body_size_bytes`, `ajaya_request_body_size_bytes`
+- [ ] Metrics: `arvik_requests_total`, `arvik_request_duration_seconds`, `arvik_requests_in_flight`, `arvik_response_body_size_bytes`, `arvik_request_body_size_bytes`
 - [ ] `GET /metrics` endpoint (Prometheus scrape)
 - [ ] Custom labels: service name, version, environment
 - [ ] Per-route metrics (label by matched path, not raw path — prevents cardinality explosion)
@@ -749,7 +749,7 @@
 - [ ] `GET /health` → `{ status: "ok", uptime: 123 }`
 - [ ] `GET /health/live` → 200 always (process alive)
 - [ ] `GET /health/ready` → 200 only if all checks pass
-- [ ] `ajaya::health::add_check(name, async_fn)` — register readiness checks
+- [ ] `arvik::health::add_check(name, async_fn)` — register readiness checks
 - [ ] Checks: DB ping, Redis ping, external API reachability
 - [ ] `GET /health/startup` — one-time startup probe
 
@@ -832,7 +832,7 @@
 - [ ] Comparison baseline: Axum 0.8, Actix-web 4
 - [ ] Platform: 32-core, `SO_REUSEPORT` enabled
 
-**Deliverable:** Numbers in README. Ajaya beats Actix on plaintext + JSON.
+**Deliverable:** Numbers in README. Arvik beats Actix on plaintext + JSON.
 
 ---
 
@@ -909,11 +909,11 @@
 **Goal:** All crates published and versioned.
 
 - [ ] All 12 crates published to crates.io
-- [ ] `ajaya` facade crate as primary entry point
+- [ ] `arvik` facade crate as primary entry point
 - [ ] GitHub release with changelog
 - [ ] Announcement: YouTube video, Medium article, Reddit r/rust post
 
 ---
 
-*Ajaya (अजय) — Unconquerable.*
+*Arvik (अजय) — Unconquerable.*
 *Built by Aarambh Dev Hub.*

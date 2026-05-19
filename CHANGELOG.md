@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-**`ajaya-sse`** — Full Server-Sent Events streaming crate.
+**`arvik-sse`** — Full Server-Sent Events streaming crate.
 
 - `Event` — Zero-allocation SSE event builder:
   - `.data(impl Into<String>)` — payload; multi-line values split into multiple `data:` lines
@@ -42,10 +42,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Default: 15-second interval, empty comment (`: \n\n`)
   - Timer resets on every real event so the interval always measures idle time
 
-- **`ajaya`** facade:
-  - `use ajaya::sse::{Event, KeepAlive, Sse}` — full module (feature = `"sse"`)
-  - `use ajaya::{Sse, SseEvent, SseKeepAlive}` — top-level convenience aliases
-  - Enable with `ajaya = { version = "0.5", features = ["sse"] }` in `Cargo.toml`
+- **`arvik`** facade:
+  - `use arvik::sse::{Event, KeepAlive, Sse}` — full module (feature = `"sse"`)
+  - `use arvik::{Sse, SseEvent, SseKeepAlive}` — top-level convenience aliases
+  - Enable with `arvik = { version = "0.5", features = ["sse"] }` in `Cargo.toml`
 
 - **`examples/sse_demo`** — SSE demonstration binary with all three patterns in one file:
   - `GET /counter` — simple integer counter, one tick per second
@@ -56,10 +56,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `ajaya-sse/Cargo.toml` — populated from stub: added `ajaya-core`, `http`, `bytes`,
+- `arvik-sse/Cargo.toml` — populated from stub: added `arvik-core`, `http`, `bytes`,
   `futures-util`, `pin-project-lite`, `tokio`, `itoa`, `serde`, `serde_json` dependencies
-- `ajaya/Cargo.toml` — added `ajaya-sse` as optional dep behind `sse` feature flag
-- `Cargo.toml` (workspace) — added `ajaya-sse` to `[workspace.dependencies]`;
+- `arvik/Cargo.toml` — added `arvik-sse` as optional dep behind `sse` feature flag
+- `Cargo.toml` (workspace) — added `arvik-sse` to `[workspace.dependencies]`;
   added `examples/sse_demo` to workspace members
 - `ROADMAP.md` §0.5.1 — marked all SSE items ✅
 - `Event::serialize()` promoted from `pub(crate)` to `pub` — enables inspection
@@ -91,7 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-**`ajaya-ws`** — Full WebSocket upgrade and messaging crate.
+**`arvik-ws`** — Full WebSocket upgrade and messaging crate.
 
 - `WebSocketUpgrade` — `FromRequest` extractor that validates the RFC 6455 handshake:
   - Checks `GET` method, `Connection: upgrade`, `Upgrade: websocket`, `Sec-WebSocket-Version: 13`
@@ -128,14 +128,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `ConnectionNotUpgradable` → 500, rest → 400
 - `WsError` — type alias for `tungstenite::Error`
 
-**`ajaya`** facade exports:
+**`arvik`** facade exports:
 
-- `use ajaya::ws::{WebSocket, WebSocketUpgrade, Message, ...}` — full module
-- `use ajaya::{WebSocket, WebSocketUpgrade, WsMessage}` — top-level convenience
+- `use arvik::ws::{WebSocket, WebSocketUpgrade, Message, ...}` — full module
+- `use arvik::{WebSocket, WebSocketUpgrade, WsMessage}` — top-level convenience
 
 ### Changed
 
-- `ajaya-ws/Cargo.toml` — added full dependency set: `tokio-tungstenite`, `hyper`, `hyper-util`,
+- `arvik-ws/Cargo.toml` — added full dependency set: `tokio-tungstenite`, `hyper`, `hyper-util`,
   `sha1`, `base64`, `futures-util`, `tracing`, `pin-project-lite`
 - `Cargo.toml` (workspace) — added `sha1 = "0.10"` workspace dependency
 - `ARCHITECTURE.md` §11 — updated WebSocket section to document auto-pong behaviour,
@@ -150,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.11] — 2026-MM-DD — CSRF Protection
 
 ### Added
-- `ajaya_middleware::csrf::CsrfLayer` — double-submit cookie CSRF protection
+- `arvik_middleware::csrf::CsrfLayer` — double-submit cookie CSRF protection
 - `CsrfToken` type — generated/verified per request, available as `Extension<CsrfToken>`
 - Automatic CSRF cookie generation (`csrf_token` cookie)  
 - State-changing method enforcement (POST, PUT, PATCH, DELETE require matching `x-csrf-token` header)
@@ -319,7 +319,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   ```rust
   Router::new().layer(map_request(|mut req: Request| async move {
-      req.headers_mut().insert("x-request-source", "ajaya".parse().unwrap());
+      req.headers_mut().insert("x-request-source", "arvik".parse().unwrap());
       req
   }));
   ```
@@ -328,31 +328,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   ```rust
   Router::new().layer(map_response(|mut res: Response| async move {
-      res.headers_mut().insert("x-powered-by", "ajaya".parse().unwrap());
+      res.headers_mut().insert("x-powered-by", "arvik".parse().unwrap());
       res
   }));
   ```
 
-- **`ajaya::middleware` module** — all four helpers + `Next` are re-exported
-  under `ajaya::middleware` in the facade crate. Import pattern:
-  `use ajaya::middleware::{from_fn, from_fn_with_state, map_request, map_response, Next};`
+- **`arvik::middleware` module** — all four helpers + `Next` are re-exported
+  under `arvik::middleware` in the facade crate. Import pattern:
+  `use arvik::middleware::{from_fn, from_fn_with_state, map_request, map_response, Next};`
 
-- `ajaya-middleware/src/from_fn.rs` — new module implementing all four types
+- `arvik-middleware/src/from_fn.rs` — new module implementing all four types
   and their Tower `Layer` + `Service` impls.
 
 ### Changed
 
-- `ajaya/src/main.rs` — `RequestIdLayer` (35-line Tower boilerplate) replaced with
+- `arvik/src/main.rs` — `RequestIdLayer` (35-line Tower boilerplate) replaced with
   a 4-line `from_fn(attach_request_id)` middleware. Also added `count_requests`
   (stateful, using `from_fn_with_state`) and `add_powered_by_header` (`map_response`)
   to demonstrate the full middleware DSL.
 
-- `ajaya-middleware/src/lib.rs` — updated module table, added `from_fn` exports.
+- `arvik-middleware/src/lib.rs` — updated module table, added `from_fn` exports.
 
-- `ajaya/src/lib.rs` — added `pub mod middleware` with all helper re-exports,
+- `arvik/src/lib.rs` — added `pub mod middleware` with all helper re-exports,
   added doc comment explaining the new middleware API.
 
-- `ajaya-middleware/src/from_fn.rs` — **refactored** from a single 1103-line file
+- `arvik-middleware/src/from_fn.rs` — **refactored** from a single 1103-line file
   into a modular structure for better maintainability:
 
   - `src/next.rs` — `Next` struct (handle to remaining middleware chain)
@@ -405,7 +405,7 @@ where
 
 ```rust
 // NEW — v0.4.1
-use ajaya::middleware::{from_fn, Next};
+use arvik::middleware::{from_fn, Next};
 
 async fn my_middleware(req: Request, next: Next) -> Response {
     // your logic here
@@ -415,7 +415,7 @@ Router::new().layer(from_fn(my_middleware));
 ```
 
 ### Added
-- `ajaya_middleware::cors::CorsLayer` — full CORS spec implementation
+- `arvik_middleware::cors::CorsLayer` — full CORS spec implementation
 - `CorsLayer::new()` — base constructor (no origins configured by default)
 - `CorsLayer::permissive()` — allow all origins, methods, headers; no credentials
 - `CorsLayer::very_permissive()` — same but with credentials (mirrors origin)
@@ -423,8 +423,8 @@ Router::new().layer(from_fn(my_middleware));
 - Automatic preflight `OPTIONS` request handling → `204 No Content`
 - `Vary: Origin` header on all non-wildcard-origin responses
 - `IntoAllowOrigin` trait for ergonomic origin configuration
-- `ajaya::CorsLayer` re-export from facade crate
-- `ajaya-middleware` added as workspace dependency
+- `arvik::CorsLayer` re-export from facade crate
+- `arvik-middleware` added as workspace dependency
 
 ---
 
@@ -437,19 +437,19 @@ Router::new().layer(from_fn(my_middleware));
 - `Router::into_service()` — convert `Router<()>` into a `BoxCloneService` with all layers baked in
 - `Server::serve_service(svc)` — serve any pre-built `BoxCloneService` directly
 - `serve_service(addr, svc)` — convenience free function for `serve_service`
-- `ajaya_router::layer::BoxCloneService` — our own type-erased, clone-friendly Tower service
-- `ajaya_router::layer::LayerFn` — `Arc<dyn Fn(BoxCloneService) -> BoxCloneService>` type alias
-- `ajaya_router::layer::into_layer_fn(layer)` — convert any Tower `Layer` into a `LayerFn`
-- `ajaya_router::layer::apply_layers(base, layers)` — apply a slice of `LayerFn` to a service
-- `ajaya_router::layer::oneshot(svc, req)` — poll-ready + call helper
+- `arvik_router::layer::BoxCloneService` — our own type-erased, clone-friendly Tower service
+- `arvik_router::layer::LayerFn` — `Arc<dyn Fn(BoxCloneService) -> BoxCloneService>` type alias
+- `arvik_router::layer::into_layer_fn(layer)` — convert any Tower `Layer` into a `LayerFn`
+- `arvik_router::layer::apply_layers(base, layers)` — apply a slice of `LayerFn` to a service
+- `arvik_router::layer::oneshot(svc, req)` — poll-ready + call helper
 - `MethodRouter<S>: Clone` — required for route-layer composition
-- `ajaya::BoxCloneService` and `ajaya::LayerFn` re-exports
+- `arvik::BoxCloneService` and `arvik::LayerFn` re-exports
 
 ### Changed
 - `serve_app` now calls `Router::into_service()` internally — all layers are applied automatically
 - `Server::serve_app` delegates to `Server::serve_service`
-- `ajaya-router/Cargo.toml`: added `tower-layer` dependency
-- `ajaya-hyper/Cargo.toml`: added `tower-service` dependency
+- `arvik-router/Cargo.toml`: added `tower-layer` dependency
+- `arvik-hyper/Cargo.toml`: added `tower-service` dependency
 
 ---
 
@@ -474,8 +474,8 @@ Router::new().layer(from_fn(my_middleware));
 - `SignedCookieJar` — HMAC-SHA256 signed cookies, requires `cookie::Key` in app state
 - `PrivateCookieJar` — AES-256-GCM encrypted + authenticated cookies
 - All three implement both `FromRequestParts<S>` and `IntoResponseParts`
-- `cookie::Key` re-exported as `ajaya::CookieKey`
-- `cookie::Cookie` re-exported as `ajaya::Cookie`
+- `cookie::Key` re-exported as `arvik::CookieKey`
+- `cookie::Cookie` re-exported as `arvik::Cookie`
 - `cookie = "0.18"` added to workspace dependencies
 
 ---
@@ -538,10 +538,10 @@ Router::new().layer(from_fn(my_middleware));
   - Also implements `IntoResponse` for symmetric use as both extractor and response type
   - Supports `application/*+json` subtypes (e.g., `application/vnd.api+json`)
 - `Form<T>` extractor — parses `application/x-www-form-urlencoded` body via `serde_urlencoded`
-- `Bytes` extractor — raw body as `bytes::Bytes` (implemented in `ajaya-core`)
-- `String` extractor — raw body as UTF-8 string (implemented in `ajaya-core`)
-- `Body` extractor — raw streaming body escape hatch (implemented in `ajaya-core`)
-- `Request` extractor — full request escape hatch (implemented in `ajaya-core`)
+- `Bytes` extractor — raw body as `bytes::Bytes` (implemented in `arvik-core`)
+- `String` extractor — raw body as UTF-8 string (implemented in `arvik-core`)
+- `Body` extractor — raw streaming body escape hatch (implemented in `arvik-core`)
+- `Request` extractor — full request escape hatch (implemented in `arvik-core`)
 - Body consumption enforced: only one `FromRequest` extractor per handler (last parameter)
 
 ---
@@ -557,7 +557,7 @@ Router::new().layer(from_fn(my_middleware));
 - `ConnectInfo<T>` extractor — client connection info (e.g., `SocketAddr`)
 - `Extension<T>` extractor — typed request extension set by middleware
 - Router inserts `MatchedPathExt` into request extensions during dispatch
-- `MatchedPathExt` type exported from `ajaya-router`
+- `MatchedPathExt` type exported from `arvik-router`
 
 ---
 
@@ -566,7 +566,7 @@ Router::new().layer(from_fn(my_middleware));
 ### Added
 - `TypedHeader<T>` extractor — uses `headers` crate for strongly-typed header parsing
   - Supports all `headers::Header` types: `Authorization`, `ContentType`, `Host`, etc.
-- `http::HeaderMap` extractor — clones the full header map (implemented in `ajaya-core`)
+- `http::HeaderMap` extractor — clones the full header map (implemented in `arvik-core`)
 - `headers` crate (`v0.4`) added as workspace dependency
 
 ---
@@ -620,8 +620,8 @@ Router::new().layer(from_fn(my_middleware));
 ### Added
 - `Router::route_service(path, service)` — mount Tower services at exact paths
 - `Router::nest_service(prefix, service)` — mount Tower services under path prefixes
-- `ServiceHandler<T>` adapter wrapping Tower `Service` into Ajaya `Handler`
-- `tower-service` dependency added to `ajaya-router`
+- `ServiceHandler<T>` adapter wrapping Tower `Service` into Arvik `Handler`
+- `tower-service` dependency added to `arvik-router`
 
 ---
 
@@ -673,7 +673,7 @@ Router::new().layer(from_fn(my_middleware));
 
 ### Added
 - `matchit` dependency for radix trie routing
-- `PathParams` struct in `ajaya-router::params`
+- `PathParams` struct in `arvik-router::params`
 
 ---
 
@@ -681,10 +681,10 @@ Router::new().layer(from_fn(my_middleware));
 
 ### Added
 - `Router<S>` — path-based HTTP router with `.route(path, method_router)` API
-- `serve_app(addr, router)` convenience function in `ajaya-hyper`
+- `serve_app(addr, router)` convenience function in `arvik-hyper`
 - `Server::serve_app(router)` method for Router-based serving
 - Path normalization (trailing slash stripping)
-- Re-exported `Router` and `serve_app` from the `ajaya` facade crate
+- Re-exported `Router` and `serve_app` from the `arvik` facade crate
 
 ---
 
@@ -734,7 +734,7 @@ Router::new().layer(from_fn(my_middleware));
   - `(StatusCode, [(K, V); N], T)` tuple for status + headers + body
   - `([(K, V); N], T)` tuple for headers + body
 - **Handler-based `serve()`** — `serve(addr, handler)` now accepts any `Handler<T>`
-- **Updated `ajaya` facade** — Re-exports `Handler`, `IntoResponse`, `ResponseBuilder`, `Redirect`
+- **Updated `arvik` facade** — Re-exports `Handler`, `IntoResponse`, `ResponseBuilder`, `Redirect`
 
 ### Changed
 
@@ -759,7 +759,7 @@ Router::new().layer(from_fn(my_middleware));
   - `.status()`, `.header()`, `.body()`, `.json()`, `.html()`, `.text()`, `.empty()`
 - **`Redirect`** — convenience redirect responses: `Redirect::to()`, `::permanent()`, `::temporary()`
 - **Enhanced `Request<B>`**
-  - `Request::from_hyper()` — convert `hyper::Request<Incoming>` to Ajaya's `Request<Body>`
+  - `Request::from_hyper()` — convert `hyper::Request<Incoming>` to Arvik's `Request<Body>`
   - `into_parts()` — decompose into `(Parts, Body)`
   - `version()` — HTTP version accessor
   - `extension::<T>()` — typed extension getter
@@ -769,7 +769,7 @@ Router::new().layer(from_fn(my_middleware));
 
 ### Changed
 
-- `ajaya-hyper` server now converts incoming Hyper requests to `ajaya_core::Request` and returns `Response<Body>` using `ResponseBuilder`
+- `arvik-hyper` server now converts incoming Hyper requests to `arvik_core::Request` and returns `Response<Body>` using `ResponseBuilder`
 
 ---
 
@@ -778,28 +778,28 @@ Router::new().layer(from_fn(my_middleware));
 ### Added
 
 - **Workspace Bootstrap** — Cargo workspace with all 12 crates initialized
-- **ajaya** — Facade crate with re-exports and binary entry point
-- **ajaya-core** — Core type stubs: `Request`, `Response`, `Body`, `Error`
+- **arvik** — Facade crate with re-exports and binary entry point
+- **arvik-core** — Core type stubs: `Request`, `Response`, `Body`, `Error`
   - `Request<B>` wrapper around `http::Request<B>` with extensions
   - `Response<B>` type alias for `http::Response<B>`
   - `Body` type alias for `Full<Bytes>` (will be replaced with `BoxBody` in v0.0.2)
   - `Error` struct with HTTP status code, inner error, and public message
-- **ajaya-hyper** — Working Hyper 1.x TCP server
+- **arvik-hyper** — Working Hyper 1.x TCP server
   - `Server::bind(addr)` — binds to a TCP address
   - `Server::serve()` — infinite accept loop with per-connection Tokio tasks
   - `serve(addr)` — convenience one-liner to start the server
-  - Responds "Hello from Ajaya" to every HTTP request
-  - `Content-Type: text/plain; charset=utf-8` and `Server: Ajaya/0.0.1` headers
+  - Responds "Hello from Arvik" to every HTTP request
+  - `Content-Type: text/plain; charset=utf-8` and `Server: Arvik/0.0.1` headers
 - **Stub crates** — Empty `lib.rs` with documentation for future implementation:
-  - `ajaya-router` — Radix trie router (planned for v0.1.x)
-  - `ajaya-extract` — Request extractors (planned for v0.2.x)
-  - `ajaya-middleware` — Built-in middleware (planned for v0.4.x)
-  - `ajaya-ws` — WebSocket support (planned for v0.5.x)
-  - `ajaya-sse` — Server-Sent Events (planned for v0.5.x)
-  - `ajaya-static` — Static file serving (planned for v0.6.x)
-  - `ajaya-tls` — TLS support (planned for v0.6.x)
-  - `ajaya-macros` — Proc macros (planned for v0.7.x)
-  - `ajaya-test` — Testing utilities (planned for v0.7.x)
+  - `arvik-router` — Radix trie router (planned for v0.1.x)
+  - `arvik-extract` — Request extractors (planned for v0.2.x)
+  - `arvik-middleware` — Built-in middleware (planned for v0.4.x)
+  - `arvik-ws` — WebSocket support (planned for v0.5.x)
+  - `arvik-sse` — Server-Sent Events (planned for v0.5.x)
+  - `arvik-static` — Static file serving (planned for v0.6.x)
+  - `arvik-tls` — TLS support (planned for v0.6.x)
+  - `arvik-macros` — Proc macros (planned for v0.7.x)
+  - `arvik-test` — Testing utilities (planned for v0.7.x)
 - **CI** — GitHub Actions workflow: `cargo check`, `cargo clippy`, `cargo test`, `cargo fmt`
 - **Documentation** — `README.md`, `ARCHITECTURE.md`, `ROADMAP.md`
 - **License** — MIT + Apache 2.0 dual license
@@ -812,17 +812,17 @@ Router::new().layer(from_fn(my_middleware));
 
 ---
 
-[Unreleased]: https://github.com/AarambhDevHub/ajaya/compare/v0.2.6...HEAD
-[0.2.6]: https://github.com/AarambhDevHub/ajaya/compare/v0.2.5...v0.2.6
-[0.2.5]: https://github.com/AarambhDevHub/ajaya/compare/v0.2.4...v0.2.5
-[0.2.4]: https://github.com/AarambhDevHub/ajaya/compare/v0.2.3...v0.2.4
-[0.2.3]: https://github.com/AarambhDevHub/ajaya/compare/v0.2.2...v0.2.3
-[0.2.2]: https://github.com/AarambhDevHub/ajaya/compare/v0.2.1...v0.2.2
-[0.2.1]: https://github.com/AarambhDevHub/ajaya/compare/v0.2.0...v0.2.1
-[0.2.0]: https://github.com/AarambhDevHub/ajaya/compare/v0.1.6...v0.2.0
-[0.1.6]: https://github.com/AarambhDevHub/ajaya/compare/v0.1.5...v0.1.6
-[0.0.5]: https://github.com/AarambhDevHub/ajaya/compare/v0.0.4...v0.0.5
-[0.0.4]: https://github.com/AarambhDevHub/ajaya/compare/v0.0.3...v0.0.4
-[0.0.3]: https://github.com/AarambhDevHub/ajaya/compare/v0.0.2...v0.0.3
-[0.0.2]: https://github.com/AarambhDevHub/ajaya/compare/v0.0.1...v0.0.2
-[0.0.1]: https://github.com/AarambhDevHub/ajaya/releases/tag/v0.0.1
+[Unreleased]: https://github.com/AarambhDevHub/arvik/compare/v0.2.6...HEAD
+[0.2.6]: https://github.com/AarambhDevHub/arvik/compare/v0.2.5...v0.2.6
+[0.2.5]: https://github.com/AarambhDevHub/arvik/compare/v0.2.4...v0.2.5
+[0.2.4]: https://github.com/AarambhDevHub/arvik/compare/v0.2.3...v0.2.4
+[0.2.3]: https://github.com/AarambhDevHub/arvik/compare/v0.2.2...v0.2.3
+[0.2.2]: https://github.com/AarambhDevHub/arvik/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/AarambhDevHub/arvik/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/AarambhDevHub/arvik/compare/v0.1.6...v0.2.0
+[0.1.6]: https://github.com/AarambhDevHub/arvik/compare/v0.1.5...v0.1.6
+[0.0.5]: https://github.com/AarambhDevHub/arvik/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/AarambhDevHub/arvik/compare/v0.0.3...v0.0.4
+[0.0.3]: https://github.com/AarambhDevHub/arvik/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/AarambhDevHub/arvik/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/AarambhDevHub/arvik/releases/tag/v0.0.1

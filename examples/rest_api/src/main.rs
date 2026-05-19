@@ -1,4 +1,4 @@
-//! Ajaya (अजय) — The Unconquerable Rust Web Framework
+//! Arvik (अजय) — Fast, Typed, and Fearless Web Framework for Rust
 //!
 //! REST API demo showcasing routing, extractors, middleware, cookies,
 //! streaming, CSRF protection, and panic recovery.
@@ -6,7 +6,7 @@
 //! Run: cargo run -p rest-api
 //! Test: curl http://localhost:8080/
 
-use ajaya::{
+use arvik::{
     AppendHeaders, CatchPanicLayer, CompressionLayer, Cookie, CookieJar, CookieKey, CsrfLayer,
     CsrfToken, Error, Extension, FromRef, Html, IntoResponse, Json, Multipart, Path, Query,
     Request, RequestBodyLimitLayer, RequestIdLayer, Response, Router, SecurityHeadersLayer,
@@ -64,7 +64,7 @@ async fn count_requests(State(state): State<AppState>, req: Request, next: Next)
 
 async fn add_powered_by_header(mut res: Response) -> Response {
     res.headers_mut()
-        .insert("x-powered-by", "ajaya".parse().unwrap());
+        .insert("x-powered-by", "arvik".parse().unwrap());
     res
 }
 
@@ -91,7 +91,7 @@ struct SearchParams {
 async fn health() -> Result<Json<serde_json::Value>, Error> {
     Ok(Json(serde_json::json!({
         "status": "healthy",
-        "framework": "Ajaya",
+        "framework": "Arvik",
         "version": "0.5.0"
     })))
 }
@@ -187,7 +187,7 @@ async fn get_user_cookie(jar: SignedCookieJar) -> String {
 }
 
 async fn not_found() -> (StatusCode, &'static str) {
-    (StatusCode::NOT_FOUND, "🔱 Ajaya: Page not found")
+    (StatusCode::NOT_FOUND, "⚡ Arvik: Page not found")
 }
 
 async fn deliberate_panic() -> &'static str {
@@ -227,8 +227,8 @@ async fn main() {
         r#"
     ╔═══════════════════════════════════════════════╗
     ║                                               ║
-    ║     🔱  Ajaya (अजय) v0.5.0                   ║
-    ║     The Unconquerable Rust Web Framework       ║
+    ║     ⚡  Arvik (अजय) v0.5.0                   ║
+    ║     Fast, Typed, and Fearless Web Framework for Rust       ║
     ║                                               ║
     ║     → http://localhost:8080                    ║
     ║                                               ║
@@ -255,7 +255,7 @@ async fn main() {
     );
 
     let state = AppState {
-        app_name: "Ajaya Framework (v0.5.0)".to_string(),
+        app_name: "Arvik Framework (v0.5.0)".to_string(),
         cookie_key: CookieKey::generate(),
         request_count: Arc::new(std::sync::atomic::AtomicU64::new(0)),
     };

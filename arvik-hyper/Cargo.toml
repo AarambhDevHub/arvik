@@ -1,0 +1,23 @@
+[package]
+name = "arvik-hyper"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+description = "Hyper server integration for the Arvik web framework"
+
+[dependencies]
+arvik-core     = { workspace = true }
+arvik-router   = { workspace = true }
+tokio          = { workspace = true }
+hyper          = { workspace = true }
+hyper-util     = { workspace = true }
+http           = { workspace = true }
+http-body      = { workspace = true }
+http-body-util = { workspace = true }
+bytes          = { workspace = true }
+tracing        = { workspace = true }
+tower-service  = { workspace = true }

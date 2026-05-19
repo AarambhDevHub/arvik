@@ -3,14 +3,14 @@ name = "websocket-chat"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "Multi-room WebSocket chat server example for Ajaya"
+description = "Multi-room WebSocket chat server example for Arvik"
 
 [[bin]]
 name = "websocket_chat"
 path = "src/main.rs"
 
 [dependencies]
-ajaya        = { path = "../../ajaya", features = ["ws"] }
+arvik        = { path = "../../arvik", features = ["ws"] }
 tokio        = { workspace = true }
 tracing      = { workspace = true }
 tracing-subscriber = { workspace = true }

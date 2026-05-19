@@ -1,4 +1,4 @@
-//! # ajaya SSE Demo
+//! # arvik SSE Demo
 //!
 //! Three SSE endpoints in a single binary:
 //!
@@ -19,8 +19,8 @@
 use std::convert::Infallible;
 use std::time::Duration;
 
-use ajaya::sse::{Event, KeepAlive, Sse};
-use ajaya::{Html, Json, Router, State, get, post, serve_app};
+use arvik::sse::{Event, KeepAlive, Sse};
+use arvik::{Html, Json, Router, State, get, post, serve_app};
 use futures_util::{Stream, StreamExt as _};
 use serde::{Deserialize, Serialize};
 use tokio::sync::broadcast;
@@ -162,7 +162,7 @@ static HTML: &str = r#"<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ajaya SSE Demo</title>
+  <title>Arvik SSE Demo</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -315,7 +315,7 @@ static HTML: &str = r#"<!DOCTYPE html>
 </head>
 <body>
   <header>
-    <h1>Ajaya SSE Demo</h1>
+    <h1>Arvik SSE Demo</h1>
     <p>Server-Sent Events — counter · JSON stream · broadcast notifications</p>
   </header>
 
@@ -368,7 +368,7 @@ static HTML: &str = r#"<!DOCTYPE html>
   </div>
 
   <footer>
-    Built with <a href="https://github.com/AarambhDevHub/ajaya">Ajaya</a> · SSE v0.5.1
+    Built with <a href="https://github.com/AarambhDevHub/arvik">Arvik</a> · SSE v0.5.1
   </footer>
 
   <script>

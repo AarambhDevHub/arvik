@@ -1,17 +1,17 @@
 [workspace]
 members = [
-    "ajaya",
-    "ajaya-core",
-    "ajaya-router",
-    "ajaya-hyper",
-    "ajaya-extract",
-    "ajaya-middleware",
-    "ajaya-ws",
-    "ajaya-sse",
-    "ajaya-static",
-    "ajaya-tls",
-    "ajaya-macros",
-    "ajaya-test",
+    "arvik",
+    "arvik-core",
+    "arvik-router",
+    "arvik-hyper",
+    "arvik-extract",
+    "arvik-middleware",
+    "arvik-ws",
+    "arvik-sse",
+    "arvik-static",
+    "arvik-tls",
+    "arvik-macros",
+    "arvik-test",
     # Examples
     "examples/websocket_chat",
     "examples/rest_api",
@@ -23,10 +23,11 @@ resolver = "2"
 version = "0.5.1"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/AarambhDevHub/ajaya"
+readme       = "README.md"
+repository = "https://github.com/AarambhDevHub/arvik"
 authors = ["Aarambh Dev Hub"]
 rust-version = "1.85"
-description = "The Unconquerable Rust Web Framework"
+description = "Fast, Typed, and Fearless Web Framework for Rust"
 
 [workspace.dependencies]
 # Async runtime
@@ -86,7 +87,7 @@ percent-encoding = "2"
 itoa           = "1"
 headers        = "0.4"
 
-# Proc macro (ajaya-macros only)
+# Proc macro (arvik-macros only)
 syn            = { version = "2", features = ["full"] }
 quote          = "1"
 proc-macro2    = "1"
@@ -103,14 +104,14 @@ base64 = "0.22"
 sha1 = "0.10"
 
 # Internal crates
-ajaya-core       = { path = "ajaya-core", version = "0.5.1" }
-ajaya-router     = { path = "ajaya-router", version = "0.5.1" }
-ajaya-hyper      = { path = "ajaya-hyper", version = "0.5.1" }
-ajaya-extract    = { path = "ajaya-extract", version = "0.5.1" }
-ajaya-middleware = { path = "ajaya-middleware", version = "0.5.1" }
-ajaya-ws         = { path = "ajaya-ws", version = "0.5.1" }
-ajaya-sse        = { path = "ajaya-sse", version = "0.5.1" }
-ajaya-static     = { path = "ajaya-static", version = "0.5.1" }
-ajaya-tls        = { path = "ajaya-tls", version = "0.5.1" }
-ajaya-macros     = { path = "ajaya-macros", version = "0.5.1" }
-ajaya-test       = { path = "ajaya-test", version = "0.5.1" }
+arvik-core       = { path = "arvik-core", version = "0.5.1" }
+arvik-router     = { path = "arvik-router", version = "0.5.1" }
+arvik-hyper      = { path = "arvik-hyper", version = "0.5.1" }
+arvik-extract    = { path = "arvik-extract", version = "0.5.1" }
+arvik-middleware = { path = "arvik-middleware", version = "0.5.1" }
+arvik-ws         = { path = "arvik-ws", version = "0.5.1" }
+arvik-sse        = { path = "arvik-sse", version = "0.5.1" }
+arvik-static     = { path = "arvik-static", version = "0.5.1" }
+arvik-tls        = { path = "arvik-tls", version = "0.5.1" }
+arvik-macros     = { path = "arvik-macros", version = "0.5.1" }
+arvik-test       = { path = "arvik-test", version = "0.5.1" }

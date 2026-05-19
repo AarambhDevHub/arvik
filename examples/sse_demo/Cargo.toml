@@ -3,14 +3,14 @@ name = "sse-demo"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "SSE demo for Ajaya — counter, JSON stream, broadcast notifications"
+description = "SSE demo for Arvik — counter, JSON stream, broadcast notifications"
 
 [[bin]]
 name = "sse_demo"
 path = "src/main.rs"
 
 [dependencies]
-ajaya          = { path = "../../ajaya", features = ["sse"] }
+arvik          = { path = "../../arvik", features = ["sse"] }
 tokio          = { workspace = true }
 tokio-stream   = { workspace = true, features = ["sync"] }
 tracing-subscriber = { workspace = true }

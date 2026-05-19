@@ -1,8 +1,10 @@
-# Ajaya (अजय) — The Unconquerable Rust Web Framework
+# Arvik — Fast, Typed, and Fearless Web Framework for Rust
 
 <div align="center">
 
-**🔱 Built on Tokio + Hyper. Engineered for maximum performance.**
+**⚡ A · R · V · I · K — Async Rust Velocity Integration Kit**
+
+*Built on Tokio + Hyper. Engineered for maximum performance.*
 
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
@@ -13,11 +15,13 @@
 
 ---
 
-## What is Ajaya?
+## What is Arvik?
 
-**Ajaya** (अजय, *"The Unconquerable"*) is a high-performance Rust web framework built from the ground up on **Tokio** and **Hyper 1.x**. It aims to unify the best features of Axum and Actix-web under one ergonomic, blazing-fast API.
+**Arvik** stands for **A**sync **R**ust **V**elocity **I**ntegration **K**it.
 
-> 🔱 **v0.5.1 — Server-Sent Events (SSE)** Ajaya now has full zero-allocation SSE support with auto-keep-alive, `json_data` serialisation, and stream integration. Follow along on [YouTube](https://youtube.com/@AarambhDevHub) or join the [Discord](https://discord.gg/HDth6PfCnp) to track progress.
+It is a high-performance Rust web framework built from the ground up on **Tokio** and **Hyper 1.x**, designed to unify the best features of Axum and Actix-web under one ergonomic, blazing-fast API.
+
+> ⚡ **v0.5.1 — Server-Sent Events (SSE)** Arvik now has full zero-allocation SSE support with auto-keep-alive, `json_data` serialisation, and stream integration. Follow along on [YouTube](https://youtube.com/@AarambhDevHub) or join the [Discord](https://discord.gg/HDth6PfCnp) to track progress.
 
 ---
 
@@ -25,18 +29,18 @@
 
 ```bash
 # Clone the repo
-git clone https://github.com/AarambhDevHub/ajaya.git
-cd ajaya
+git clone https://github.com/AarambhDevHub/arvik.git
+cd arvik
 
 # Run the server
-cargo run -p ajaya
+cargo run -p arvik
 ```
 
 Then in another terminal:
 
 ```bash
 curl http://localhost:8080/
-# => {"status":"healthy","framework":"Ajaya","version":"0.1.x"}
+# => {"status":"healthy","framework":"Arvik","version":"0.5.1"}
 
 curl http://localhost:8080/users/42
 # => {"id":"42","name":"User from path param"}
@@ -54,7 +58,7 @@ curl http://localhost:8080/not-a-route
 Extract typed data from requests with compile-time safety. Handlers support up to 16 extractors.
 
 ```rust
-use ajaya::{Router, get, post, Json, Path, Query, State};
+use arvik::{Router, get, post, Json, Path, Query, State};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
@@ -99,7 +103,7 @@ async fn create_user(Json(body): Json<CreateUser>) -> Json<User> {
 Zero-allocation request matching, dynamic path parameters, and catch-all wildcards.
 
 ```rust
-use ajaya::{Router, get, post, Json, Path};
+use arvik::{Router, get, post, Json, Path};
 
 async fn get_user(Path(id): Path<u32>) -> Json<serde_json::Value> {
     Json(serde_json::json!({ "user_id": id }))
@@ -112,7 +116,7 @@ async fn main() {
         .route("/users/{id}", get(get_user))
         .route("/files/{*path}", get(|| async { "File content" }));
 
-    ajaya::serve_app("0.0.0.0:8080", app).await.unwrap();
+    arvik::serve_app("0.0.0.0:8080", app).await.unwrap();
 }
 ```
 
@@ -145,7 +149,7 @@ let app = Router::new()
 
 Handlers can return `Result<T, Error>` and use `?` for error propagation. Errors produce secure JSON responses — internal details are never leaked.
 
-### Complete Middleware System
+### ✅ Complete Middleware System
 
 | Layer | Description |
 |---|---|
@@ -172,22 +176,22 @@ Handlers can return `Result<T, Error>` and use `?` for error propagation. Errors
 
 ### ✅ WebSocket Support
 
-Full WebSocket support via `ajaya-ws`, built on `tokio-tungstenite`. Auto-pong keeps connections alive with zero application boilerplate.
+Full WebSocket support via `arvik-ws`, built on `tokio-tungstenite`. Auto-pong keeps connections alive with zero application boilerplate.
 
 > **WebSocket is opt-in.** Enable it by adding the `ws` feature to your `Cargo.toml`:
 >
 > ```toml
 > # Opt in to WebSocket
-> ajaya = { version = "0.5", features = ["ws"] }
+> arvik = { version = "0.5", features = ["ws"] }
 > ```
 >
-> Default build (`ajaya = "0.5"`) is HTTP-only — no WebSocket compiled in.
+> Default build (`arvik = "0.5"`) is HTTP-only — no WebSocket compiled in.
 
 ```rust
-use ajaya::{Router, get};
-use ajaya::ws::{WebSocket, WebSocketUpgrade, Message};
+use arvik::{Router, get};
+use arvik::ws::{WebSocket, WebSocketUpgrade, Message};
 
-async fn ws_handler(ws: WebSocketUpgrade) -> impl ajaya::IntoResponse {
+async fn ws_handler(ws: WebSocketUpgrade) -> impl arvik::IntoResponse {
     ws.on_upgrade(|mut socket| async move {
         // Ping/Pong handled automatically — no extra match arm needed
         while let Some(Ok(msg)) = socket.recv().await {
@@ -206,7 +210,7 @@ async fn ws_handler(ws: WebSocketUpgrade) -> impl ajaya::IntoResponse {
 }
 
 // With config + subprotocol negotiation
-async fn chat_handler(ws: WebSocketUpgrade) -> impl ajaya::IntoResponse {
+async fn chat_handler(ws: WebSocketUpgrade) -> impl arvik::IntoResponse {
     ws.protocols(["chat", "json"])
       .max_message_size(64 * 1024)   // 64 KB
       .max_frame_size(16 * 1024)     // 16 KB
@@ -237,17 +241,17 @@ let app = Router::new()
 
 ### ✅ Server-Sent Events (SSE)
 
-Full Server-Sent Events support via `ajaya-sse`. Send real-time updates to the browser with built-in keep-alive pings and zero-allocation string rendering.
+Full Server-Sent Events support via `arvik-sse`. Send real-time updates to the browser with built-in keep-alive pings and zero-allocation string rendering.
 
 > **SSE is opt-in.** Enable it by adding the `sse` feature to your `Cargo.toml`:
 >
 > ```toml
-> ajaya = { version = "0.5", features = ["sse"] }
+> arvik = { version = "0.5", features = ["sse"] }
 > ```
 
 ```rust
-use ajaya::{Router, get};
-use ajaya::sse::{Event, KeepAlive, Sse};
+use arvik::{Router, get};
+use arvik::sse::{Event, KeepAlive, Sse};
 use std::time::Duration;
 use tokio_stream::StreamExt as _;
 
@@ -275,19 +279,19 @@ let app = Router::new().route("/stream", get(json_stream));
 ## Workspace Structure
 
 ```
-ajaya/
-├── ajaya/              # Facade crate (re-exports everything)
-├── ajaya-core/         # Core: Request, Response, Body, Handler, IntoResponse, Error
-├── ajaya-router/       # MethodRouter — HTTP method dispatch
-├── ajaya-hyper/        # Hyper 1.x server integration
-├── ajaya-extract/      # Extractors: Path, Query, Json, Form (coming in v0.2.x)
-├── ajaya-middleware/   # CORS, compression, timeout, etc. (coming in v0.4.x)
-├── ajaya-ws/           # WebSocket support (v0.5.0 ✅)
-├── ajaya-sse/          # Server-Sent Events (coming in v0.5.x)
-├── ajaya-static/       # Static file serving (coming in v0.6.x)
-├── ajaya-tls/          # TLS via rustls (coming in v0.6.x)
-├── ajaya-macros/       # Proc macros: #[handler], #[route] (coming in v0.7.x)
-└── ajaya-test/         # Testing utilities (coming in v0.7.x)
+arvik/
+├── arvik/              # Facade crate (re-exports everything)
+├── arvik-core/         # Core: Request, Response, Body, Handler, IntoResponse, Error
+├── arvik-router/       # MethodRouter — HTTP method dispatch
+├── arvik-hyper/        # Hyper 1.x server integration
+├── arvik-extract/      # Extractors: Path, Query, Json, Form (coming in v0.2.x)
+├── arvik-middleware/   # CORS, compression, timeout, etc. (coming in v0.4.x)
+├── arvik-ws/           # WebSocket support (v0.5.0 ✅)
+├── arvik-sse/          # Server-Sent Events (coming in v0.5.x)
+├── arvik-static/       # Static file serving (coming in v0.6.x)
+├── arvik-tls/          # TLS via rustls (coming in v0.6.x)
+├── arvik-macros/       # Proc macros: #[handler], #[route] (coming in v0.7.x)
+└── arvik-test/         # Testing utilities (coming in v0.7.x)
 ```
 
 ---
@@ -310,6 +314,7 @@ See [ROADMAP.md](ROADMAP.md) for the complete version-by-version plan.
 | 0.8.x | Observability & Security | ⏳ Planned |
 | 0.9.x | Performance Sprint | ⏳ Planned |
 | 0.10.x | Stabilization & Docs | ⏳ Planned |
+
 ---
 
 ## Architecture
@@ -320,29 +325,29 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full technical specification incl
 
 ## Performance
 
-Ajaya aims to unify extreme ergonomics with world-class performance. Here is how Ajaya `v0.2.6` compares against the Rust heavyweights in a simple TCP path routing test (`wrk -t4 -c100 -d10s`), built in `--release` mode and run simultaneously on the same hardware.
+Arvik aims to unify extreme ergonomics with world-class performance. Here is how Arvik compares against the Rust heavyweights in a simple TCP path routing test (`wrk -t4 -c100 -d10s`), built in `--release` mode and run simultaneously on the same hardware.
 
 | Framework | Version | Requests / sec | Latency (avg) | Underlying Engine |
 | --- | --- | --- | --- | --- |
 | Actix-Web | v4 | `331,131 req/s` | `483 µs` | Custom HTTP worker model |
 | Axum | v0.8.x | `301,439 req/s` | `349 µs` | Tokio / Hyper 1.x |
-| **Ajaya** | **v0.3.4** | **`307,177 req/s`** | **`333 µs`** | Tokio / Hyper 1.x |
+| **Arvik** | **v0.3.4** | **`307,177 req/s`** | **`333 µs`** | Tokio / Hyper 1.x |
 
-*Tested using `wrk` with 100 concurrent workers across 4 threads for 10 seconds. Ajaya achieves performance completely matched with Axum out of the box, powered by its zero-allocation radix trie path routing.*
+*Tested using `wrk` with 100 concurrent workers across 4 threads for 10 seconds. Arvik achieves performance completely matched with Axum out of the box, powered by its zero-allocation radix trie path routing.*
 
 ---
 
 ## Contributing
 
-Ajaya is being built in public from `0.0.5`. Contributions are welcome at every stage.
+Arvik is being built in public from `0.0.5`. Contributions are welcome at every stage.
 
 See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide — setup, coding standards, commit format, and PR process.
 
 Quick start for contributors:
 
 ```bash
-git clone https://github.com/AarambhDevHub/ajaya.git
-cd ajaya
+git clone https://github.com/AarambhDevHub/arvik.git
+cd arvik
 cargo check --workspace
 cargo clippy --workspace -- -D warnings
 cargo test --workspace
@@ -356,8 +361,18 @@ cargo test --workspace
 |----------|------|---------|
 | 💬 Discord | [Aarambh Dev Hub](https://discord.gg/HDth6PfCnp) | Questions, discussion, dev updates |
 | 📺 YouTube | [Aarambh Dev Hub](https://youtube.com/@AarambhDevHub) | Build-in-public video series |
-| 🐙 GitHub Discussions | [Discussions](https://github.com/AarambhDevHub/ajaya/discussions) | Feature proposals, Q&A |
-| 🐛 GitHub Issues | [Issues](https://github.com/AarambhDevHub/ajaya/issues) | Bug reports |
+| 🐙 GitHub Discussions | [Discussions](https://github.com/AarambhDevHub/arvik/discussions) | Feature proposals, Q&A |
+| 🐛 GitHub Issues | [Issues](https://github.com/AarambhDevHub/arvik/issues) | Bug reports |
+
+---
+
+## Support
+
+If Arvik has been useful to you, consider supporting the project:
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?logo=buy-me-a-coffee)](https://buymeacoffee.com/aarambhdevhub)
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-support-ea4aaa?logo=github)](https://github.com/sponsors/aarambh-darshan)
+[![Razorpay](https://img.shields.io/badge/Razorpay-donate-02042b?logo=razorpay)](https://razorpay.me/@aarambhdevhub)
 
 ---
 
@@ -378,4 +393,4 @@ Copyright 2026 Aarambh Dev Hub
 
 ---
 
-*Ajaya (अजय) — Unconquerable. Built by [Aarambh Dev Hub](https://github.com/AarambhDevHub).* 🔱
+*Arvik — **A**sync **R**ust **V**elocity **I**ntegration **K**it. Built by [Aarambh Dev Hub](https://github.com/AarambhDevHub).* ⚡

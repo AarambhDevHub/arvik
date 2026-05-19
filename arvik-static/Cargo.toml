@@ -1,0 +1,12 @@
+[package]
+name = "arvik-static"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+description = "Static file serving for the Arvik web framework"
+
+[dependencies]

@@ -53,176 +53,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ajaya"
-version = "0.5.1"
-dependencies = [
- "ajaya-core",
- "ajaya-extract",
- "ajaya-hyper",
- "ajaya-middleware",
- "ajaya-router",
- "ajaya-sse",
- "ajaya-ws",
- "bytes",
- "cookie",
- "futures-util",
- "http",
- "serde",
- "serde_json",
- "tokio",
- "tower-layer",
- "tower-service",
- "tracing",
- "tracing-subscriber",
- "uuid",
-]
-
-[[package]]
-name = "ajaya-core"
-version = "0.5.1"
-dependencies = [
- "bytes",
- "futures-util",
- "http",
- "http-body",
- "http-body-util",
- "hyper",
- "mime",
- "pin-project-lite",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "ajaya-extract"
-version = "0.5.1"
-dependencies = [
- "ajaya-core",
- "ajaya-router",
- "bytes",
- "cookie",
- "futures-util",
- "headers",
- "http",
- "http-body",
- "http-body-util",
- "mime",
- "multer",
- "percent-encoding",
- "serde",
- "serde_json",
- "serde_urlencoded",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "ajaya-hyper"
-version = "0.5.1"
-dependencies = [
- "ajaya-core",
- "ajaya-router",
- "bytes",
- "http",
- "http-body",
- "http-body-util",
- "hyper",
- "hyper-util",
- "tokio",
- "tower-service",
- "tracing",
-]
-
-[[package]]
-name = "ajaya-macros"
-version = "0.5.1"
-
-[[package]]
-name = "ajaya-middleware"
-version = "0.5.1"
-dependencies = [
- "ajaya-core",
- "ajaya-router",
- "async-compression",
- "base64",
- "cookie",
- "http",
- "http-body",
- "mime",
- "parking_lot",
- "tokio",
- "tokio-util",
- "tower-layer",
- "tower-service",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "ajaya-router"
-version = "0.5.1"
-dependencies = [
- "ajaya-core",
- "bytes",
- "futures-util",
- "http",
- "http-body",
- "http-body-util",
- "matchit",
- "tower-layer",
- "tower-service",
- "tracing",
-]
-
-[[package]]
-name = "ajaya-sse"
-version = "0.5.1"
-dependencies = [
- "ajaya-core",
- "bytes",
- "futures-util",
- "http",
- "http-body",
- "itoa",
- "pin-project-lite",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "ajaya-static"
-version = "0.5.1"
-
-[[package]]
-name = "ajaya-test"
-version = "0.5.1"
-
-[[package]]
-name = "ajaya-tls"
-version = "0.5.1"
-
-[[package]]
-name = "ajaya-ws"
-version = "0.5.1"
-dependencies = [
- "ajaya-core",
- "base64",
- "bytes",
- "futures-util",
- "http",
- "hyper",
- "hyper-util",
- "pin-project-lite",
- "sha1",
- "tokio",
- "tokio-tungstenite",
- "tracing",
-]
-
-[[package]]
 name = "alloc-no-stdlib"
 version = "2.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -242,6 +72,176 @@ name = "anyhow"
 version = "1.0.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
+
+[[package]]
+name = "arvik"
+version = "0.5.1"
+dependencies = [
+ "arvik-core",
+ "arvik-extract",
+ "arvik-hyper",
+ "arvik-middleware",
+ "arvik-router",
+ "arvik-sse",
+ "arvik-ws",
+ "bytes",
+ "cookie",
+ "futures-util",
+ "http",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+]
+
+[[package]]
+name = "arvik-core"
+version = "0.5.1"
+dependencies = [
+ "bytes",
+ "futures-util",
+ "http",
+ "http-body",
+ "http-body-util",
+ "hyper",
+ "mime",
+ "pin-project-lite",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "arvik-extract"
+version = "0.5.1"
+dependencies = [
+ "arvik-core",
+ "arvik-router",
+ "bytes",
+ "cookie",
+ "futures-util",
+ "headers",
+ "http",
+ "http-body",
+ "http-body-util",
+ "mime",
+ "multer",
+ "percent-encoding",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "arvik-hyper"
+version = "0.5.1"
+dependencies = [
+ "arvik-core",
+ "arvik-router",
+ "bytes",
+ "http",
+ "http-body",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "tokio",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
+name = "arvik-macros"
+version = "0.5.1"
+
+[[package]]
+name = "arvik-middleware"
+version = "0.5.1"
+dependencies = [
+ "arvik-core",
+ "arvik-router",
+ "async-compression",
+ "base64",
+ "cookie",
+ "http",
+ "http-body",
+ "mime",
+ "parking_lot",
+ "tokio",
+ "tokio-util",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "arvik-router"
+version = "0.5.1"
+dependencies = [
+ "arvik-core",
+ "bytes",
+ "futures-util",
+ "http",
+ "http-body",
+ "http-body-util",
+ "matchit",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
+name = "arvik-sse"
+version = "0.5.1"
+dependencies = [
+ "arvik-core",
+ "bytes",
+ "futures-util",
+ "http",
+ "http-body",
+ "itoa",
+ "pin-project-lite",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "arvik-static"
+version = "0.5.1"
+
+[[package]]
+name = "arvik-test"
+version = "0.5.1"
+
+[[package]]
+name = "arvik-tls"
+version = "0.5.1"
+
+[[package]]
+name = "arvik-ws"
+version = "0.5.1"
+dependencies = [
+ "arvik-core",
+ "base64",
+ "bytes",
+ "futures-util",
+ "http",
+ "hyper",
+ "hyper-util",
+ "pin-project-lite",
+ "sha1",
+ "tokio",
+ "tokio-tungstenite",
+ "tracing",
+]
 
 [[package]]
 name = "async-compression"
@@ -1119,7 +1119,7 @@ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 name = "rest-api"
 version = "0.5.1"
 dependencies = [
- "ajaya",
+ "arvik",
  "bytes",
  "cookie",
  "futures-util",
@@ -1296,7 +1296,7 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 name = "sse-demo"
 version = "0.5.1"
 dependencies = [
- "ajaya",
+ "arvik",
  "futures-util",
  "serde",
  "serde_json",
@@ -1735,7 +1735,7 @@ dependencies = [
 name = "websocket-chat"
 version = "0.5.1"
 dependencies = [
- "ajaya",
+ "arvik",
  "serde_json",
  "tokio",
  "tracing",

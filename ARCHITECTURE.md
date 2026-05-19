@@ -1,6 +1,6 @@
-# Ajaya (अजय) — Full Architecture & Feature Specification
+# Arvik — Full Architecture & Feature Specification
 
-> *The Unconquerable Rust Web Framework*
+> *Fast, Typed, and Fearless Web Framework for Rust*
 > Built on Tokio + Hyper. Engineered to beat Actix-web in benchmarks.
 > Every feature Axum and Actix-web have — unified under one ergonomic API.
 
@@ -36,25 +36,25 @@
 26. [Performance Architecture](#26-performance-architecture)
 27. [Full Dependency Graph](#27-full-dependency-graph)
 28. [Feature Flags](#28-feature-flags)
-29. [Comparison: Ajaya vs Axum vs Actix](#29-comparison-ajaya-vs-axum-vs-actix)
+29. [Comparison: Arvik vs Axum vs Actix](#29-comparison-arvik-vs-axum-vs-actix)
 
 ---
 
 ## 1. Workspace Structure
 
 ```
-ajaya/
+arvik/
 ├── Cargo.toml                  # Workspace root
 ├── ARCHITECTURE.md
 ├── ROADMAP.md
 ├── README.md
 │
-├── ajaya/                      # Top-level facade crate (re-exports everything)
+├── arvik/                      # Top-level facade crate (re-exports everything)
 │   ├── Cargo.toml
 │   └── src/
 │       └── lib.rs
 │
-├── ajaya-core/                 # Core traits, types, request/response primitives
+├── arvik-core/                 # Core traits, types, request/response primitives
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
@@ -65,7 +65,7 @@ ajaya/
 │       ├── into_response.rs
 │       └── error.rs
 │
-├── ajaya-router/               # Radix trie router, method dispatch, nested routers
+├── arvik-router/               # Radix trie router, method dispatch, nested routers
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
@@ -75,7 +75,7 @@ ajaya/
 │       ├── method_router.rs
 │       └── nested.rs
 │
-├── ajaya-hyper/                # Hyper server integration, connection management
+├── arvik-hyper/                # Hyper server integration, connection management
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
@@ -84,7 +84,7 @@ ajaya/
 │       ├── acceptor.rs
 │       └── graceful.rs
 │
-├── ajaya-extract/              # All extractors: Path, Query, Json, Form, Headers...
+├── arvik-extract/              # All extractors: Path, Query, Json, Form, Headers...
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
@@ -99,7 +99,7 @@ ajaya/
 │       ├── connect_info.rs
 │       └── rejection.rs
 │
-├── ajaya-middleware/           # Built-in middleware (logging, CORS, compression, etc.)
+├── arvik-middleware/           # Built-in middleware (logging, CORS, compression, etc.)
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
@@ -117,7 +117,7 @@ ajaya/
 │       ├── trace.rs
 │       └── catch_panic.rs
 │
-├── ajaya-ws/                   # WebSocket upgrade + messaging
+├── arvik-ws/                   # WebSocket upgrade + messaging
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
@@ -125,27 +125,27 @@ ajaya/
 │       ├── socket.rs
 │       └── message.rs
 │
-├── ajaya-sse/                  # Server-Sent Events
+├── arvik-sse/                  # Server-Sent Events
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
 │       └── event.rs
 │
-├── ajaya-static/               # Static file serving + directory listing
+├── arvik-static/               # Static file serving + directory listing
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
 │       ├── serve_dir.rs
 │       └── serve_file.rs
 │
-├── ajaya-tls/                  # TLS via rustls + native-tls
+├── arvik-tls/                  # TLS via rustls + native-tls
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
 │       ├── rustls.rs
 │       └── native_tls.rs
 │
-├── ajaya-macros/               # Proc macros: #[handler], #[route], #[debug_handler]
+├── arvik-macros/               # Proc macros: #[handler], #[route], #[debug_handler]
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
@@ -153,7 +153,7 @@ ajaya/
 │       ├── route.rs
 │       └── debug_handler.rs
 │
-├── ajaya-test/                 # Testing utilities
+├── arvik-test/                 # Testing utilities
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs
@@ -177,18 +177,18 @@ ajaya/
 
 | Crate | Responsibility | Public API Surface |
 |---|---|---|
-| `ajaya` | Facade re-exporter, feature-gated convenience | Everything users need |
-| `ajaya-core` | `Request`, `Response`, `Body`, `Handler`, `IntoResponse`, `AjayaError` | Core traits + types |
-| `ajaya-router` | Radix trie routing, method dispatch, nested routers, route params | `Router`, `MethodRouter` |
-| `ajaya-hyper` | Hyper 1.x server loop, TCP accept, graceful shutdown | `Server`, `serve()` |
-| `ajaya-extract` | All extractors: `Path`, `Query`, `Json`, `Form`, `State`, etc. | `FromRequest`, `FromRequestParts` |
-| `ajaya-middleware` | Tower-compatible built-in middleware | `CorsLayer`, `CompressionLayer`, etc. |
-| `ajaya-ws` | WebSocket handshake + message passing | `WebSocket`, `ws()` |
-| `ajaya-sse` | Server-Sent Events streaming | `Sse`, `Event` |
-| `ajaya-static` | Serve files and directories | `ServeDir`, `ServeFile` |
-| `ajaya-tls` | TLS acceptor (rustls / native-tls) | `TlsAcceptor` |
-| `ajaya-macros` | Proc macros for ergonomics | `#[handler]`, `#[route]` |
-| `ajaya-test` | In-process test client | `TestClient` |
+| `arvik` | Facade re-exporter, feature-gated convenience | Everything users need |
+| `arvik-core` | `Request`, `Response`, `Body`, `Handler`, `IntoResponse`, `AjayaError` | Core traits + types |
+| `arvik-router` | Radix trie routing, method dispatch, nested routers, route params | `Router`, `MethodRouter` |
+| `arvik-hyper` | Hyper 1.x server loop, TCP accept, graceful shutdown | `Server`, `serve()` |
+| `arvik-extract` | All extractors: `Path`, `Query`, `Json`, `Form`, `State`, etc. | `FromRequest`, `FromRequestParts` |
+| `arvik-middleware` | Tower-compatible built-in middleware | `CorsLayer`, `CompressionLayer`, etc. |
+| `arvik-ws` | WebSocket handshake + message passing | `WebSocket`, `ws()` |
+| `arvik-sse` | Server-Sent Events streaming | `Sse`, `Event` |
+| `arvik-static` | Serve files and directories | `ServeDir`, `ServeFile` |
+| `arvik-tls` | TLS acceptor (rustls / native-tls) | `TlsAcceptor` |
+| `arvik-macros` | Proc macros for ergonomics | `#[handler]`, `#[route]` |
+| `arvik-test` | In-process test client | `TestClient` |
 
 ---
 
@@ -197,7 +197,7 @@ ajaya/
 ### 3.1 Request
 
 ```rust
-// ajaya-core/src/request.rs
+// arvik-core/src/request.rs
 pub struct Request<B = Body> {
     inner: http::Request<B>,
     extensions: Extensions,
@@ -222,7 +222,7 @@ impl<B> Request<B> {
 ### 3.2 Response
 
 ```rust
-// ajaya-core/src/response.rs
+// arvik-core/src/response.rs
 pub type Response<B = Body> = http::Response<B>;
 
 // Builder pattern
@@ -245,7 +245,7 @@ impl ResponseBuilder {
 ### 3.3 Body
 
 ```rust
-// ajaya-core/src/body.rs
+// arvik-core/src/body.rs
 // Unified body type — wraps boxed bytes stream
 pub struct Body(BoxBody);
 
@@ -275,7 +275,7 @@ pub struct LimitedBody {
 ### 4.1 Router
 
 ```rust
-// ajaya-router/src/lib.rs
+// arvik-router/src/lib.rs
 
 pub struct Router<S = ()> {
     inner: Arc<RouterInner<S>>,
@@ -380,7 +380,7 @@ impl MethodRouter<S> {
 ### 5.1 Handler Trait
 
 ```rust
-// ajaya-core/src/handler.rs
+// arvik-core/src/handler.rs
 
 pub trait Handler<T, S>: Clone + Send + Sized + 'static {
     type Future: Future<Output = Response> + Send + 'static;
@@ -582,7 +582,7 @@ impl IntoResponseParts for CookieJar {
 
 ## 8. Middleware & Layers
 
-Ajaya uses Tower's `Service` + `Layer` model. Every middleware is a `Layer`.
+Arvik uses Tower's `Service` + `Layer` model. Every middleware is a `Layer`.
 
 ### 8.1 Applying Middleware
 
@@ -607,7 +607,7 @@ Router::new()
 
 ### 8.2 Built-in Middleware
 
-#### CORS (`ajaya-middleware::cors`)
+#### CORS (`arvik-middleware::cors`)
 ```rust
 CorsLayer::new()
     .allow_origin(["https://example.com".parse()?])
@@ -622,7 +622,7 @@ CorsLayer::permissive()     // allow everything (dev)
 CorsLayer::very_permissive() // allow everything including credentials
 ```
 
-#### Compression (`ajaya-middleware::compression`)
+#### Compression (`arvik-middleware::compression`)
 ```rust
 CompressionLayer::new()
     .gzip(true)
@@ -781,7 +781,7 @@ async fn handler(user: CurrentUser) { ... }
 ### 10.1 AjayaError
 
 ```rust
-// ajaya-core/src/error.rs
+// arvik-core/src/error.rs
 
 #[derive(Debug)]
 pub struct Error {
@@ -858,13 +858,13 @@ Router::new()
 
 ## 11. WebSockets
 
-`ajaya-ws` provides full WebSocket support built on `tokio-tungstenite`.
+`arvik-ws` provides full WebSocket support built on `tokio-tungstenite`.
 
 **Auto ping/pong**: `WebSocket::recv()` automatically replies to `Ping` frames
 with a matching `Pong` — no boilerplate needed in your handler.
 
 ```rust
-// ajaya-ws
+// arvik-ws
 
 // Handler upgrade
 async fn ws_handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> Response {
@@ -918,7 +918,7 @@ ws.max_message_size(64 * 1024)      // 64KB max message
 ## 12. Server-Sent Events (SSE)
 
 ```rust
-// ajaya-sse
+// arvik-sse
 
 async fn sse_handler() -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
     let stream = tokio_stream::wrappers::IntervalStream::new(
@@ -946,7 +946,7 @@ async fn sse_handler() -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
 ## 13. Multipart & File Uploads
 
 ```rust
-// ajaya-extract::multipart
+// arvik-extract::multipart
 
 async fn upload_handler(mut multipart: Multipart) -> Result<impl IntoResponse, AppError> {
     while let Some(mut field) = multipart.next_field().await? {
@@ -979,7 +979,7 @@ Multipart::with_constraints(
 ## 14. Static File Serving
 
 ```rust
-// ajaya-static
+// arvik-static
 
 // Serve a directory
 Router::new()
@@ -1004,8 +1004,8 @@ Router::new()
 ## 15. TLS / HTTPS
 
 ```rust
-// ajaya-tls — rustls backend
-use ajaya_tls::rustls::{RustlsConfig, SelfSignedCert};
+// arvik-tls — rustls backend
+use arvik_tls::rustls::{RustlsConfig, SelfSignedCert};
 
 // From PEM files
 let config = RustlsConfig::from_pem_file("cert.pem", "key.pem").await?;
@@ -1017,14 +1017,14 @@ let config = RustlsConfig::from_pem(cert_pem, key_pem).await?;
 let config = RustlsConfig::self_signed(["localhost", "127.0.0.1"]).await?;
 
 // Serve
-ajaya::serve_tls(app, "0.0.0.0:443", config).await?;
+arvik::serve_tls(app, "0.0.0.0:443", config).await?;
 
 // Hot reload TLS certs without restart
 let config = RustlsConfig::from_pem_file("cert.pem", "key.pem").await?;
 config.reload_from_pem_file("cert.pem", "key.pem").await?;
 
 // native-tls backend (OpenSSL / SChannel / Secure Transport)
-use ajaya_tls::native::{NativeTlsConfig};
+use arvik_tls::native::{NativeTlsConfig};
 let config = NativeTlsConfig::from_pkcs12("identity.p12", "password")?;
 ```
 
@@ -1035,14 +1035,14 @@ let config = NativeTlsConfig::from_pkcs12("identity.p12", "password")?;
 ```rust
 // HTTP/1.1 + HTTP/2 (via hyper — automatic ALPN negotiation with TLS)
 let config = RustlsConfig::from_pem_file("cert.pem", "key.pem").await?;
-ajaya::serve_tls(app, addr, config).await?;  // auto-negotiates h1/h2
+arvik::serve_tls(app, addr, config).await?;  // auto-negotiates h1/h2
 
 // HTTP/2 over cleartext (h2c) — for internal services / proxies
-ajaya::serve_h2c(app, addr).await?;
+arvik::serve_h2c(app, addr).await?;
 
 // HTTP/3 (QUIC via quinn — feature flag)
 #[cfg(feature = "http3")]
-ajaya::serve_h3(app, addr, quic_config).await?;
+arvik::serve_h3(app, addr, quic_config).await?;
 
 // Server configuration
 ServerConfig::new()
@@ -1061,7 +1061,7 @@ ServerConfig::new()
 ## 17. gRPC Support
 
 ```rust
-// ajaya integrates with tonic for gRPC via Tower compatibility
+// arvik integrates with tonic for gRPC via Tower compatibility
 // Serve gRPC and REST on the same port
 
 use tonic::transport::Server as TonicServer;
@@ -1077,7 +1077,7 @@ let app = Router::new()
     .route_service("/users.UserService/*rpc", grpc_service)  // gRPC routes
     .merge(rest_router);  // REST routes
 
-ajaya::serve(app, addr).await?;
+arvik::serve(app, addr).await?;
 ```
 
 ---
@@ -1085,7 +1085,7 @@ ajaya::serve(app, addr).await?;
 ## 18. Testing Utilities
 
 ```rust
-// ajaya-test
+// arvik-test
 
 // Build in-process test client (no network, no port)
 let app = Router::new().route("/", get(|| async { "Hello" }));
@@ -1134,7 +1134,7 @@ let res = client.post("/upload")
 ```rust
 // Gives MUCH better error messages when handler type-checks fail
 // (same as axum's #[debug_handler])
-#[ajaya::debug_handler]
+#[arvik::debug_handler]
 async fn handler(State(state): State<AppState>, Json(body): Json<Payload>) -> impl IntoResponse {
     // Without debug_handler, rustc error points to .route(), with it — points here
 }
@@ -1144,20 +1144,20 @@ async fn handler(State(state): State<AppState>, Json(body): Json<Payload>) -> im
 
 ```rust
 // Attach routing metadata directly to functions
-#[ajaya::route(GET, "/users/:id")]
+#[arvik::route(GET, "/users/:id")]
 async fn get_user(Path(id): Path<Uuid>) -> impl IntoResponse {
     // ...
 }
 
 // Collect and register all annotated routes
-let app = Router::new().routes(ajaya::collect_routes![get_user, create_user, delete_user]);
+let app = Router::new().routes(arvik::collect_routes![get_user, create_user, delete_user]);
 ```
 
 ### 19.3 `#[handler]`
 
 ```rust
 // Impl Handler trait for structs (useful for handlers that need fields)
-#[ajaya::handler]
+#[arvik::handler]
 struct RateLimitedHandler {
     inner: Arc<dyn Handler>,
     limiter: Arc<RateLimiter>,
@@ -1178,7 +1178,7 @@ impl RateLimitedHandler {
 ## 20. Configuration System
 
 ```rust
-// ajaya::config
+// arvik::config
 
 #[derive(Debug, Deserialize)]
 pub struct ServerConfig {
@@ -1194,11 +1194,11 @@ pub struct ServerConfig {
 
 // Load from file, env, or code
 let config = AjayaConfig::builder()
-    .file("ajaya.toml")
+    .file("arvik.toml")
     .env_prefix("AJAYA")
     .build()?;
 
-// ajaya.toml example
+// arvik.toml example
 // [server]
 // host = "0.0.0.0"
 // port = 8080
@@ -1214,26 +1214,26 @@ let config = AjayaConfig::builder()
 
 ```rust
 // Prometheus integration (feature = "metrics")
-use ajaya::metrics::PrometheusMetricsLayer;
+use arvik::metrics::PrometheusMetricsLayer;
 
 Router::new()
     .route("/", get(handler))
     .layer(PrometheusMetricsLayer::new())
-    .route("/metrics", get(ajaya::metrics::metrics_handler))
+    .route("/metrics", get(arvik::metrics::metrics_handler))
 
 // Automatically tracks:
-// - ajaya_requests_total (counter, by method + path + status)
-// - ajaya_request_duration_seconds (histogram)
-// - ajaya_requests_in_flight (gauge)
-// - ajaya_response_body_size_bytes (histogram)
-// - ajaya_request_body_size_bytes (histogram)
+// - arvik_requests_total (counter, by method + path + status)
+// - arvik_request_duration_seconds (histogram)
+// - arvik_requests_in_flight (gauge)
+// - arvik_response_body_size_bytes (histogram)
+// - arvik_request_body_size_bytes (histogram)
 ```
 
 ### 21.2 Distributed Tracing
 
 ```rust
 // OpenTelemetry integration (feature = "opentelemetry")
-use ajaya::trace::OtelLayer;
+use arvik::trace::OtelLayer;
 
 Router::new()
     .layer(OtelLayer::new("my-service"))
@@ -1247,12 +1247,12 @@ Router::new()
 ```rust
 // Built-in health endpoint
 Router::new()
-    .route("/health", get(ajaya::health::health_handler))
-    .route("/health/live", get(ajaya::health::liveness_handler))
-    .route("/health/ready", get(ajaya::health::readiness_handler))
+    .route("/health", get(arvik::health::health_handler))
+    .route("/health/live", get(arvik::health::liveness_handler))
+    .route("/health/ready", get(arvik::health::readiness_handler))
 
 // Custom readiness checks
-ajaya::health::add_check("database", || async {
+arvik::health::add_check("database", || async {
     db.ping().await.is_ok()
 });
 ```
@@ -1271,7 +1271,7 @@ CsrfLayer::new("secret-key-32-bytes-long!!!!")
 ### 22.2 Cookie Security
 
 ```rust
-use ajaya::cookies::{CookieJar, Cookie, Key, SignedCookieJar, PrivateCookieJar};
+use arvik::cookies::{CookieJar, Cookie, Key, SignedCookieJar, PrivateCookieJar};
 
 // Signed cookies (tamper-proof)
 async fn handler(jar: SignedCookieJar) -> (SignedCookieJar, Response) {
@@ -1311,7 +1311,7 @@ async fn create_user(ValidatedJson(body): ValidatedJson<CreateUser>) -> impl Int
 ## 23. Connection & Server Tuning
 
 ```rust
-// ajaya-hyper/src/server.rs
+// arvik-hyper/src/server.rs
 
 Server::bind("0.0.0.0:8080")
     // Socket options
@@ -1377,10 +1377,10 @@ CsvBody::new(iter_of_records)
 
 ## 25. Database Integration
 
-Ajaya is DB-agnostic. These are first-party example integrations:
+Arvik is DB-agnostic. These are first-party example integrations:
 
 ```toml
-# ajaya/Cargo.toml feature flags
+# arvik/Cargo.toml feature flags
 [features]
 sqlx = ["dep:sqlx"]
 diesel = ["dep:diesel"]
@@ -1470,18 +1470,18 @@ tokio::runtime::Builder::new_multi_thread()
 # Root workspace Cargo.toml
 [workspace]
 members = [
-    "ajaya",
-    "ajaya-core",
-    "ajaya-router",
-    "ajaya-hyper",
-    "ajaya-extract",
-    "ajaya-middleware",
-    "ajaya-ws",
-    "ajaya-sse",
-    "ajaya-static",
-    "ajaya-tls",
-    "ajaya-macros",
-    "ajaya-test",
+    "arvik",
+    "arvik-core",
+    "arvik-router",
+    "arvik-hyper",
+    "arvik-extract",
+    "arvik-middleware",
+    "arvik-ws",
+    "arvik-sse",
+    "arvik-static",
+    "arvik-tls",
+    "arvik-macros",
+    "arvik-test",
 ]
 resolver = "2"
 
@@ -1544,7 +1544,7 @@ percent-encoding = "2"
 form_urlencoded = "1"
 itoa           = "1"
 
-# Proc macro (ajaya-macros only)
+# Proc macro (arvik-macros only)
 syn            = { version = "2", features = ["full"] }
 quote          = "1"
 proc-macro2    = "1"
@@ -1555,7 +1555,7 @@ proc-macro2    = "1"
 ## 28. Feature Flags
 
 ```toml
-# ajaya/Cargo.toml
+# arvik/Cargo.toml
 [features]
 default = ["http1", "http2", "json", "form", "query", "multipart", "ws", "sse"]
 
@@ -1604,7 +1604,7 @@ static-files = ["dep:tokio-util"]
 test-utils = []
 
 # Proc macros
-macros     = ["dep:ajaya-macros"]
+macros     = ["dep:arvik-macros"]
 
 # Validation
 validator  = ["dep:validator"]
@@ -1615,9 +1615,9 @@ sqlx       = ["dep:sqlx"]
 
 ---
 
-## 29. Comparison: Ajaya vs Axum vs Actix
+## 29. Comparison: Arvik vs Axum vs Actix
 
-| Feature | **Ajaya** | Axum | Actix-web |
+| Feature | **Arvik** | Axum | Actix-web |
 |---|---|---|---|
 | HTTP/1.1 | ✅ | ✅ | ✅ |
 | HTTP/2 | ✅ | ✅ | ✅ |
@@ -1651,5 +1651,5 @@ sqlx       = ["dep:sqlx"]
 
 ---
 
-*Ajaya (अजय) — Unconquerable.*
+*Arvik (अजय) — Unconquerable.*
 *Built by Aarambh Dev Hub.*

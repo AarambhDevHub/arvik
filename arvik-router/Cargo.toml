@@ -1,0 +1,22 @@
+[package]
+name = "arvik-router"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+description = "Radix trie router for the Arvik web framework"
+
+[dependencies]
+arvik-core     = { workspace = true }
+http           = { workspace = true }
+bytes          = { workspace = true }
+http-body      = { workspace = true }
+http-body-util = { workspace = true }
+futures-util   = { workspace = true }
+tracing        = { workspace = true }
+matchit        = { workspace = true }
+tower-service  = { workspace = true }
+tower-layer    = { workspace = true }

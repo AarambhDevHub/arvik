@@ -2,7 +2,7 @@
 
 ## Our Pledge
 
-We as members, contributors, and leaders of the Ajaya community pledge to make
+We as members, contributors, and leaders of the Arvik community pledge to make
 participation in our project and community a harassment-free experience for
 everyone, regardless of age, body size, visible or invisible disability,
 ethnicity, sex characteristics, gender identity and expression, level of
@@ -60,7 +60,7 @@ decisions when appropriate.
 
 This Code of Conduct applies within all community spaces, including:
 
-- The [ajaya GitHub repository](https://github.com/aarambh-darshan/ajaya) —
+- The [arvik GitHub repository](https://github.com/aarambh-darshan/arvik) —
   issues, pull requests, discussions, code reviews
 - The Aarambh Dev Hub Discord server
 - Any official social media accounts representing the project
@@ -150,4 +150,4 @@ Community Impact Guidelines were inspired by
 
 ---
 
-*Ajaya (अजय) — Unconquerable. Built by Aarambh Dev Hub.*
+*Arvik (अजय) — Unconquerable. Built by Aarambh Dev Hub.*

@@ -1,0 +1,28 @@
+[package]
+name = "arvik-extract"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+description = "Request extractors for the Arvik web framework"
+
+[dependencies]
+arvik-core       = { workspace = true }
+arvik-router     = { workspace = true }
+http             = { workspace = true }
+http-body        = { workspace = true }
+http-body-util   = { workspace = true }
+bytes            = { workspace = true }
+serde            = { workspace = true }
+serde_json       = { workspace = true }
+serde_urlencoded = { workspace = true }
+mime             = { workspace = true }
+percent-encoding = { workspace = true }
+thiserror        = { workspace = true }
+multer           = { workspace = true }
+headers          = { workspace = true }
+futures-util     = { workspace = true }
+cookie           = { workspace = true }
