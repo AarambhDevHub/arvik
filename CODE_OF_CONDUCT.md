@@ -150,4 +150,4 @@ Community Impact Guidelines were inspired by
 
 ---
 
-*Arvik (अजय) — Unconquerable. Built by Aarambh Dev Hub.*
+*Arvik — Fast, Typed, and Fearless. Built by Aarambh Dev Hub.*

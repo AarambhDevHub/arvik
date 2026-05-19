@@ -1,6 +1,6 @@
 # Contributing to Arvik
 
-First off, thank you for considering contributing to **Arvik (अजय)**! Every contribution helps make this framework more unconquerable. ⚡
+First off, thank you for considering contributing to **Arvik**! Every contribution helps make this framework more unconquerable. ⚡
 
 ## Table of Contents
 

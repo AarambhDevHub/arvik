@@ -1,4 +1,4 @@
-//! Arvik (अजय) — Fast, Typed, and Fearless Web Framework for Rust
+//! Arvik — Fast, Typed, and Fearless Web Framework for Rust
 //!
 //! REST API demo showcasing routing, extractors, middleware, cookies,
 //! streaming, CSRF protection, and panic recovery.
@@ -227,7 +227,7 @@ async fn main() {
         r#"
     ╔═══════════════════════════════════════════════╗
     ║                                               ║
-    ║     ⚡  Arvik (अजय) v0.5.0                   ║
+    ║     ⚡  Arvik v0.5.0                           ║
     ║     Fast, Typed, and Fearless Web Framework for Rust       ║
     ║                                               ║
     ║     → http://localhost:8080                    ║

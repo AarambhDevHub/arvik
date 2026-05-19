@@ -193,4 +193,4 @@ vulnerabilities to us. Contributors will be listed here with their permission.
 
 ---
 
-*Arvik (अजय) — Unconquerable. Built by Aarambh Dev Hub.*
+*Arvik — Fast, Typed, and Fearless. Built by Aarambh Dev Hub.*

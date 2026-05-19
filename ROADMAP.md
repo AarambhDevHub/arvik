@@ -1,4 +1,4 @@
-# Arvik (अजय) — Public Roadmap
+# Arvik — Public Roadmap
 
 > *From first TCP byte to unconquerable framework.*
 > Every version is a shipping, usable increment. No big-bang releases.
@@ -915,5 +915,5 @@
 
 ---
 
-*Arvik (अजय) — Unconquerable.*
+*Arvik — Fast, Typed, and Fearless.*
 *Built by Aarambh Dev Hub.*

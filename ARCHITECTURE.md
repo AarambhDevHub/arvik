@@ -1651,5 +1651,5 @@ sqlx       = ["dep:sqlx"]
 
 ---
 
-*Arvik (अजय) — Unconquerable.*
+*Arvik — Fast, Typed, and Fearless.*
 *Built by Aarambh Dev Hub.*
