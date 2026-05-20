@@ -949,29 +949,39 @@ async fn sse_handler() -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
 // arvik-extract::multipart
 
 async fn upload_handler(mut multipart: Multipart) -> Result<impl IntoResponse, AppError> {
-    while let Some(mut field) = multipart.next_field().await? {
-        let name = field.name().unwrap_or("unknown").to_string();
-        let filename = field.file_name().map(|s| s.to_string());
-        let content_type = field.content_type().map(|s| s.to_string());
-
-        // Stream field bytes
-        while let Some(chunk) = field.chunk().await? {
-            // process chunk
+    while let Some(field) = multipart.next_field().await? {
+        if field.file_name().is_some() {
+            // Stream directly to a secure temporary file. The file is deleted
+            // on drop unless TempFile::persist is called.
+            let temp = field.save_to_temp().await?;
+            tracing::info!(
+                file = ?temp.metadata().file_name(),
+                bytes = temp.bytes_written(),
+                "upload saved"
+            );
+        } else {
+            // Or process field bytes with cumulative progress.
+            let mut stream = field.into_progress_stream();
+            while let Some(chunk) = stream.next().await {
+                let chunk = chunk?;
+                tracing::debug!(bytes_read = chunk.bytes_read());
+            }
         }
-
-        // Or collect all bytes at once
-        let data = field.bytes().await?;
     }
     Ok(StatusCode::OK)
 }
 
-// Config
-Multipart::with_constraints(
-    MultipartConstraints::new()
+// Config via request extensions, usually inserted by middleware.
+req.extensions_mut().insert(
+    MultipartConfig::new()
         .max_fields(20)
-        .max_field_size(5 * 1024 * 1024)   // 5MB per field
-        .max_total_size(50 * 1024 * 1024)  // 50MB total
-)
+        .max_field_size(5 * 1024 * 1024)    // 5MB per field
+        .max_total_size(50 * 1024 * 1024)   // 50MB total
+        .with_temp_dir("/var/tmp/arvik-uploads"),
+);
+
+// Custom extractors/tests can construct directly:
+Multipart::from_request_with_constraints(req, MultipartConstraints::new()).await?;
 ```
 
 ---
@@ -1543,6 +1553,7 @@ mime           = "0.3"
 percent-encoding = "2"
 form_urlencoded = "1"
 itoa           = "1"
+tempfile       = "3"
 
 # Proc macro (arvik-macros only)
 syn            = { version = "2", features = ["full"] }
