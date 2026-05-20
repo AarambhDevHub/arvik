@@ -9,6 +9,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.2] — 2026-05-20 — Multipart Polish
+
+### Added
+
+**`arvik-extract` multipart upload polish** — production-ready streaming upload handling.
+
+- `MultipartConfig` — request-extension driven multipart configuration:
+  - `.max_fields(usize)`
+  - `.max_field_size(u64)`
+  - `.max_total_size(u64)`
+  - `.with_temp_dir(path)` for default temp-file placement
+- `Multipart::from_request_with_constraints(req, constraints)` and
+  `Multipart::from_request_with_config(req, config)` for custom extractors and tests
+- `Field::into_stream()` — consume a field as a byte stream
+- `Field::into_progress_stream()` — stream `ProgressChunk` values with cumulative `bytes_read`
+- `Field::save_to_temp()`, `.save_to_temp_in(path)`, and progress-aware temp-file save helpers
+- `TempFile` — secure temporary upload handle that deletes on drop unless persisted
+- `FieldMetadata` — owned field name, filename, and content-type metadata
+- `MultipartError` now implements `IntoResponse` with status helpers:
+  - size limit and field-count failures map to `413 Payload Too Large`
+  - malformed multipart streams map to `400 Bad Request`
+  - temp-file IO failures map to `500 Internal Server Error`
+- Integration tests for browser-style multipart bodies, clear rejections, streaming limits,
+  progress reporting, field count limits, temp-file cleanup, and custom temp dirs
+
+### Changed
+
+- Workspace version bumped to `0.5.2`
+- `Multipart` still works as the same handler extractor, but now reads optional
+  `MultipartConfig` or `MultipartConstraints` from request extensions
+- `Multipart::next_field()` now enforces `max_fields` only when an extra field is actually
+  present, so exactly-at-limit uploads can still finish with `Ok(None)`
+- `BodyStream` skips non-data frames in-place without synthetic wakeups
+- README, architecture docs, and roadmap updated for the 0.5.2 multipart API
+
+### Fixed
+
+- Non-multipart requests now return a clear `415 Unsupported Media Type`
+- Missing multipart boundaries now return the dedicated missing-boundary rejection
+- Field-count overflow is reported as typed `MultipartError::TooManyFields` instead of a
+  generic incomplete-stream parser error
+
+---
+
 ## [0.5.1] — 2026-05-05 — Server-Sent Events
 
 ### Added

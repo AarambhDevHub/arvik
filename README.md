@@ -8,7 +8,7 @@
 
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
-[![Version](https://img.shields.io/badge/version-0.5.1-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.2-green.svg)](CHANGELOG.md)
 [![Discord](https://img.shields.io/discord/placeholder?label=discord&logo=discord&logoColor=white)](https://discord.gg/HDth6PfCnp)
 
 </div>
@@ -21,7 +21,7 @@
 
 It is a high-performance Rust web framework built from the ground up on **Tokio** and **Hyper 1.x**, designed to unify the best features of Axum and Actix-web under one ergonomic, blazing-fast API.
 
-> ⚡ **v0.5.1 — Server-Sent Events (SSE)** Arvik now has full zero-allocation SSE support with auto-keep-alive, `json_data` serialisation, and stream integration. Follow along on [YouTube](https://youtube.com/@AarambhDevHub) or join the [Discord](https://discord.gg/HDth6PfCnp) to track progress.
+> ⚡ **v0.5.2 — Multipart Polish** Arvik now has production-ready multipart uploads with streaming temp-file saves, progress streams, configurable limits, and clearer upload errors. Follow along on [YouTube](https://youtube.com/@AarambhDevHub) or join the [Discord](https://discord.gg/HDth6PfCnp) to track progress.
 
 ---
 
@@ -40,7 +40,7 @@ Then in another terminal:
 
 ```bash
 curl http://localhost:8080/
-# => {"status":"healthy","framework":"Arvik","version":"0.5.1"}
+# => {"status":"healthy","framework":"Arvik","version":"0.5.2"}
 
 curl http://localhost:8080/users/42
 # => {"id":"42","name":"User from path param"}
@@ -51,7 +51,7 @@ curl http://localhost:8080/not-a-route
 
 ---
 
-## Features (v0.5.1)
+## Features (v0.5.2)
 
 ### ✅ Type-Safe Extractors
 
@@ -174,6 +174,58 @@ Handlers can return `Result<T, Error>` and use `?` for error propagation. Errors
 | `map_request` | Transform request only (no response) |
 | `map_response` | Transform response only (no request) |
 
+### ✅ Multipart Uploads
+
+Multipart uploads are parsed as a stream. Large files can be processed chunk by chunk or written to a secure temporary file without buffering the full upload in memory.
+
+```rust
+use arvik::{Multipart, MultipartError};
+use futures_util::StreamExt as _;
+
+async fn upload(mut multipart: Multipart) -> Result<String, MultipartError> {
+    let mut files = 0;
+
+    while let Some(field) = multipart.next_field().await? {
+        if field.file_name().is_some() {
+            let temp = field.save_to_temp().await?;
+            files += 1;
+            println!(
+                "saved {:?}: {} bytes",
+                temp.metadata().file_name(),
+                temp.bytes_written()
+            );
+        } else {
+            let mut stream = field.into_progress_stream();
+            while let Some(chunk) = stream.next().await {
+                let chunk = chunk?;
+                println!("field progress: {} bytes", chunk.bytes_read());
+            }
+        }
+    }
+
+    Ok(format!("received {files} files"))
+}
+```
+
+Configure limits and temp-file placement through request extensions from middleware:
+
+```rust
+use arvik::{middleware::map_request, MultipartConfig, Router, post};
+
+let app = Router::new()
+    .route("/upload", post(upload))
+    .layer(map_request(|mut req: arvik::Request| async move {
+        req.extensions_mut().insert(
+            MultipartConfig::new()
+                .max_fields(20)
+                .max_field_size(10 * 1024 * 1024)
+                .max_total_size(100 * 1024 * 1024)
+                .with_temp_dir("/var/tmp/arvik-uploads"),
+        );
+        req
+    }));
+```
+
 ### ✅ WebSocket Support
 
 Full WebSocket support via `arvik-ws`, built on `tokio-tungstenite`. Auto-pong keeps connections alive with zero application boilerplate.
@@ -284,10 +336,10 @@ arvik/
 ├── arvik-core/         # Core: Request, Response, Body, Handler, IntoResponse, Error
 ├── arvik-router/       # MethodRouter — HTTP method dispatch
 ├── arvik-hyper/        # Hyper 1.x server integration
-├── arvik-extract/      # Extractors: Path, Query, Json, Form (coming in v0.2.x)
-├── arvik-middleware/   # CORS, compression, timeout, etc. (coming in v0.4.x)
+├── arvik-extract/      # Extractors: Path, Query, Json, Form, Multipart
+├── arvik-middleware/   # CORS, compression, timeout, auth, rate limits
 ├── arvik-ws/           # WebSocket support (v0.5.0 ✅)
-├── arvik-sse/          # Server-Sent Events (coming in v0.5.x)
+├── arvik-sse/          # Server-Sent Events (v0.5.1 ✅)
 ├── arvik-static/       # Static file serving (coming in v0.6.x)
 ├── arvik-tls/          # TLS via rustls (coming in v0.6.x)
 ├── arvik-macros/       # Proc macros: #[handler], #[route] (coming in v0.7.x)
@@ -307,8 +359,9 @@ See [ROADMAP.md](ROADMAP.md) for the complete version-by-version plan.
 | **0.2.x** | Extractors | ✅ Complete |
 | **0.3.x** | Responses & Error Handling | ✅ Complete |
 | **0.4.x** | Middleware | ✅ Complete |
-| **0.5.x** | WebSocket | ✅ Complete |
+| **0.5.0** | WebSocket | ✅ Complete |
 | **0.5.1** | Server-Sent Events (SSE) | ✅ Complete |
+| **0.5.2** | Multipart Polish | ✅ Complete |
 | 0.6.x | TLS, HTTP/2, Static Files | ⏳ Next |
 | 0.7.x | Macros, Testing, Config | ⏳ Planned |
 | 0.8.x | Observability & Security | ⏳ Planned |

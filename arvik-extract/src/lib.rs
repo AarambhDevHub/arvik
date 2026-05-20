@@ -64,7 +64,10 @@ pub use self::form::Form;
 pub use self::json::Json;
 pub use self::matched_path::MatchedPath;
 pub use self::method::MethodExtractor;
-pub use self::multipart::{Field, Multipart, MultipartConstraints};
+pub use self::multipart::{
+    Field, FieldMetadata, FieldStream, Multipart, MultipartConfig, MultipartConstraints,
+    MultipartError, ProgressChunk, ProgressStream, TempFile,
+};
 pub use self::original_uri::OriginalUri;
 pub use self::path::Path;
 pub use self::query::Query;

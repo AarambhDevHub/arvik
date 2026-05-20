@@ -542,11 +542,11 @@
 ### `0.5.2` — Multipart Polish
 **Goal:** Production-ready multipart handling.
 
-- [ ] Streaming multipart (no full-body buffering)
-- [ ] Save field to temp file automatically
-- [ ] Progress tracking via stream
-- [ ] Reject non-multipart requests with clear error
-- [ ] Integration test with actual browser form upload
+- [x] Streaming multipart (no full-body buffering)
+- [x] Save field to temp file automatically
+- [x] Progress tracking via stream
+- [x] Reject non-multipart requests with clear error
+- [x] Integration test with actual browser form upload
 
 **Deliverable:** Upload a 100MB file without 100MB RAM usage.
 

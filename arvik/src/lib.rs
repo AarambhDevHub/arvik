@@ -129,8 +129,15 @@ pub use cookie::Key as CookieKey;
 
 // Multipart
 pub use arvik_extract::Field;
+pub use arvik_extract::FieldMetadata;
+pub use arvik_extract::FieldStream;
 pub use arvik_extract::Multipart;
+pub use arvik_extract::MultipartConfig;
 pub use arvik_extract::MultipartConstraints;
+pub use arvik_extract::MultipartError;
+pub use arvik_extract::ProgressChunk;
+pub use arvik_extract::ProgressStream;
+pub use arvik_extract::TempFile;
 
 // Rejections (for custom error handling)
 pub use arvik_extract::rejection;

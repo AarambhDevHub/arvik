@@ -75,7 +75,7 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
 
 [[package]]
 name = "arvik"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik-core",
  "arvik-extract",
@@ -100,7 +100,7 @@ dependencies = [
 
 [[package]]
 name = "arvik-core"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "bytes",
  "futures-util",
@@ -119,7 +119,7 @@ dependencies = [
 
 [[package]]
 name = "arvik-extract"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik-core",
  "arvik-router",
@@ -136,12 +136,14 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_urlencoded",
+ "tempfile",
  "thiserror 2.0.18",
+ "tokio",
 ]
 
 [[package]]
 name = "arvik-hyper"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik-core",
  "arvik-router",
@@ -158,11 +160,11 @@ dependencies = [
 
 [[package]]
 name = "arvik-macros"
-version = "0.5.1"
+version = "0.5.2"
 
 [[package]]
 name = "arvik-middleware"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik-core",
  "arvik-router",
@@ -183,7 +185,7 @@ dependencies = [
 
 [[package]]
 name = "arvik-router"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik-core",
  "bytes",
@@ -199,7 +201,7 @@ dependencies = [
 
 [[package]]
 name = "arvik-sse"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik-core",
  "bytes",
@@ -215,19 +217,19 @@ dependencies = [
 
 [[package]]
 name = "arvik-static"
-version = "0.5.1"
+version = "0.5.2"
 
 [[package]]
 name = "arvik-test"
-version = "0.5.1"
+version = "0.5.2"
 
 [[package]]
 name = "arvik-tls"
-version = "0.5.1"
+version = "0.5.2"
 
 [[package]]
 name = "arvik-ws"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik-core",
  "base64",
@@ -474,6 +476,12 @@ dependencies = [
  "libc",
  "windows-sys",
 ]
+
+[[package]]
+name = "fastrand"
+version = "2.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f1f227452a390804cdb637b74a86990f2a7d7ba4b7d5693aac9b4dd6defd8d6"
 
 [[package]]
 name = "find-msvc-tools"
@@ -845,6 +853,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "48f5d2a454e16a5ea0f4ced81bd44e4cfc7bd3a507b61887c99fd3538b28e4af"
 
 [[package]]
+name = "linux-raw-sys"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+
+[[package]]
 name = "lock_api"
 version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1117,7 +1131,7 @@ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 
 [[package]]
 name = "rest-api"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik",
  "bytes",
@@ -1130,6 +1144,19 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "uuid",
+]
+
+[[package]]
+name = "rustix"
+version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+dependencies = [
+ "bitflags",
+ "errno",
+ "libc",
+ "linux-raw-sys",
+ "windows-sys",
 ]
 
 [[package]]
@@ -1294,7 +1321,7 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 
 [[package]]
 name = "sse-demo"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik",
  "futures-util",
@@ -1320,6 +1347,19 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "tempfile"
+version = "3.27.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
+dependencies = [
+ "fastrand",
+ "getrandom 0.4.2",
+ "once_cell",
+ "rustix",
+ "windows-sys",
 ]
 
 [[package]]
@@ -1733,7 +1773,7 @@ dependencies = [
 
 [[package]]
 name = "websocket-chat"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "arvik",
  "serde_json",
